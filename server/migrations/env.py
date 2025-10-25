@@ -9,7 +9,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from app.core.database import Base
-from app.models.user import User
+# Remove user import - we don't need it anymore
+# from app.models.user import User  # ❌ REMOVED
 from app.models.repository import Repository
 from app.models.conversation import Conversation, Message
 

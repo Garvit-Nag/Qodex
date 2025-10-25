@@ -12,16 +12,17 @@ class RepositoryStatus(str, Enum):
 class RepositoryCreate(BaseModel):
     name: str
     github_url: str
+    user_id: str  # ✅ Added back!
 
 class RepositoryResponse(BaseModel):
     id: int
+    user_id: str  # ✅ Added back!
     name: str
     github_url: str
     status: RepositoryStatus
     error_message: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    user_id: Optional[int] = None
     
     class Config:
         from_attributes = True

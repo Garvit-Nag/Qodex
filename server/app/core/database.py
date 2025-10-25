@@ -3,11 +3,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-# Create SQLAlchemy engine
+# ✅ Create SQLAlchemy engine WITH CONNECTION POOLING
 engine = create_engine(
     settings.database_url,
-    pool_pre_ping=True,
-    echo=settings.debug
+    pool_size=10,          # ✅ Allow 10 concurrent connections
+    max_overflow=20,       # ✅ Allow 20 more if needed  
+    pool_pre_ping=True,    # ✅ Verify connections are alive
+    pool_recycle=3600,     # ✅ Recycle connections every hour
+    echo=settings.debug,   # ✅ SQL logging in debug mode
+    pool_timeout=30,       # ✅ Wait 30s for available connection
 )
 
 # Create SessionLocal class
