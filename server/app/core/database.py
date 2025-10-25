@@ -3,24 +3,23 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-# ✅ Create SQLAlchemy engine WITH CONNECTION POOLING
+# ✅ Production-ready engine configuration
 engine = create_engine(
     settings.database_url,
-    pool_size=10,          # ✅ Allow 10 concurrent connections
-    max_overflow=20,       # ✅ Allow 20 more if needed  
-    pool_pre_ping=True,    # ✅ Verify connections are alive
-    pool_recycle=3600,     # ✅ Recycle connections every hour
-    echo=settings.debug,   # ✅ SQL logging in debug mode
-    pool_timeout=30,       # ✅ Wait 30s for available connection
+    pool_size=5,           # Reduced for Neon free tier
+    max_overflow=10,       # Reduced for free tier
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    echo=False,            # Disable SQL logging in production
+    pool_timeout=30,
+    connect_args={
+        "sslmode": "require"  # Required for Neon
+    } if settings.database_url.startswith("postgresql") else {}
 )
 
-# Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Create Base class
 Base = declarative_base()
 
-# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
