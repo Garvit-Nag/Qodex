@@ -44,8 +44,9 @@ async def startup_event():
 
 # Health check endpoint
 @app.get("/health")
+@app.head("/health")
 async def health_check():
-    """Health check endpoint for monitoring services"""
+    """Health check endpoint for monitoring services (GET and HEAD)"""
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
