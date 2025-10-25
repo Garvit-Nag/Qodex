@@ -7,15 +7,39 @@ from app.schemas.repository import RepositoryCreate, RepositoryResponse
 from app.core.config import settings
 from app.services import GitHubService, EmbeddingService, VectorService
 import logging
+import logging
+import sys
 
-logging.basicConfig(level=logging.INFO)
+# Force logging to stdout for HuggingFace visibility
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ],
+    force=True  # Override any existing config
+)
+
 logger = logging.getLogger(__name__)
+
+# Ensure all loggers use stdout
+for handler in logging.root.handlers:
+    handler.stream = sys.stdout
 
 router = APIRouter()
 
 async def process_repository_background(repository_id: int, user_id: str):
     """Background task to process repository with hybrid RAG"""
-    logger.info(f"🚀 Starting QODEX HYBRID RAG processing for repository {repository_id} (user: {user_id})")
+    
+    # Force stdout for this specific task
+    import sys
+    
+    def force_log(message):
+        """Force log to stdout and flush immediately"""
+        print(f"[QODEX-BG] {message}", file=sys.stdout, flush=True)
+        logger.info(message)
+    
+    force_log(f"🚀 Starting QODEX HYBRID RAG processing for repository {repository_id} (user: {user_id})")
     
     from app.database import SessionLocal
     db = SessionLocal()
@@ -33,42 +57,42 @@ async def process_repository_background(repository_id: int, user_id: str):
         ).first()
         
         if not repository:
-            logger.error(f"❌ Repository {repository_id} not found for user {user_id}")
+            force_log(f"❌ Repository {repository_id} not found for user {user_id}")
             return
         
         repository.status = RepositoryStatusEnum.PROCESSING
         db.commit()
-        logger.info(f"📊 Repository {repository_id} status: PROCESSING")
+        force_log(f"📊 Repository {repository_id} status: PROCESSING")
         
-        logger.info(f"📥 Step 1: Cloning repository {repository.github_url}")
+        force_log(f"📥 Step 1: Cloning repository {repository.github_url}")
         temp_dir = await github_service.clone_repository(repository.github_url)
         
-        logger.info(f"📁 Step 2: Extracting code files from {repository.name}")
+        force_log(f"📁 Step 2: Extracting code files from {repository.name}")
         code_chunks = await github_service.extract_code_files(temp_dir)
         
         if not code_chunks:
             raise Exception("No supported code files found in repository")
         
-        logger.info(f"✅ Found {len(code_chunks)} code chunks")
+        force_log(f"✅ Found {len(code_chunks)} code chunks")
         
-        logger.info(f"⚡ Step 3: Generating embeddings with LOCAL SentenceTransformers")
+        force_log(f"⚡ Step 3: Generating embeddings with LOCAL SentenceTransformers")
         embedded_chunks = await embedding_service.generate_embeddings_batch(code_chunks)
         
         if not embedded_chunks:
             raise Exception("Failed to generate local embeddings")
         
-        logger.info(f"💾 Step 4: Storing embeddings in ChromaDB")
+        force_log(f"💾 Step 4: Storing embeddings in ChromaDB")
         await vector_service.store_embeddings(repository_id, embedded_chunks)
         
         repository.status = RepositoryStatusEnum.READY
         repository.error_message = None
         db.commit()
         
-        logger.info(f"🎉 SUCCESS! QODEX Repository {repository_id} is READY for chat! (user: {user_id})")
+        force_log(f"🎉 SUCCESS! QODEX Repository {repository_id} is READY for chat! (user: {user_id})")
         
     except Exception as e:
         error_message = str(e)
-        logger.error(f"❌ Error processing repository {repository_id}: {error_message}")
+        force_log(f"❌ Error processing repository {repository_id}: {error_message}")
         
         try:
             repository = db.query(Repository).filter(Repository.id == repository_id).first()
@@ -77,13 +101,14 @@ async def process_repository_background(repository_id: int, user_id: str):
                 repository.error_message = error_message[:500]
                 db.commit()
         except Exception as db_error:
-            logger.error(f"❌ Failed to update repository status: {str(db_error)}")
+            force_log(f"❌ Failed to update repository status: {str(db_error)}")
     
     finally:
         if temp_dir:
             github_service.cleanup_temp_dir(temp_dir)
         db.close()
-
+        force_log(f"🏁 Finished processing repository {repository_id}")
+        
 def verify_client_secret(x_client_secret: str = Header(..., alias="X-Client-Secret")):
     """Verify request comes from authorized Next.js client"""
     if x_client_secret != settings.nextjs_secret:

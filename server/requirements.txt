@@ -13,6 +13,7 @@ huggingface-hub
 torch
 numpy
 chromadb
+pinecone
 
 # Google AI
 google-generativeai==0.3.1
