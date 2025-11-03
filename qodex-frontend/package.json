@@ -9,10 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-query-devtools": "^5.90.2",
+    "@types/jszip": "^3.4.0",
     "@types/three": "^0.180.0",
+    "appwrite": "^21.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.548.0",
+    "monaco-editor": "^0.54.0",
     "next": "16.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
