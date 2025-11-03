@@ -7,9 +7,16 @@ export interface User {
 
 export interface UserProfile {
   $id: string;
-  subscription_tier: 'demo' | 'free' | 'professional' | 'premium';
+  subscription_tier: 'free' | 'premium';
   repos_uploaded_count: number;
   max_repos_allowed: number;
+  repos_uploaded_this_month: number;
+  month_reset_date: string;
+  subscription_status: 'active' | 'cancelled' | 'expired';
+  subscription_id?: string;
+  plan_id?: string;
+  next_billing_date?: string;
+  subscription_created_at?: string;
   $createdAt: string;
   $updatedAt: string;
 }

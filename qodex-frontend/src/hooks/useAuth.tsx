@@ -60,26 +60,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
   const createUserProfile = async (userId: string) => {
-    try {
-      console.log('🔄 Creating user profile for:', userId);
-      const profile = await databases.createDocument(
-        DATABASE_ID,
-        USER_PROFILES_COLLECTION_ID,
-        userId,
-        {
-          subscription_tier: 'demo',
-          repos_uploaded_count: 0,
-          max_repos_allowed: 2,
-        }
-      );
-      console.log('✅ User profile created:', profile);
-      setUserProfile(profile as unknown as UserProfile);
-    } catch (error: any) {
-      console.error('❌ Failed to create user profile:', error);
-      // Don't throw error - just log it
-      // The app should still work without user profile initially
-    }
-  };
+  try {
+    console.log('🔄 Creating user profile for:', userId);
+    const currentMonth = new Date().toISOString().substring(0, 7); // "2025-11"
+    
+    const profile = await databases.createDocument(
+      DATABASE_ID,
+      USER_PROFILES_COLLECTION_ID,
+      userId,
+      {
+        subscription_tier: 'free',           // ← NEW
+        repos_uploaded_count: 0,
+        max_repos_allowed: 10,               // ← NEW
+        repos_uploaded_this_month: 0,        // ← NEW
+        month_reset_date: currentMonth,      // ← NEW
+        subscription_status: 'active'        // ← NEW
+      }
+    );
+    console.log('✅ User profile created:', profile);
+    setUserProfile(profile as unknown as UserProfile);
+  } catch (error: any) {
+    console.error('❌ Failed to create user profile:', error);
+  }
+};
+
   const signInWithEmail = async (email: string, password: string) => {
   setLoading(true);
   try {

@@ -18,8 +18,41 @@ export interface UserProfile extends BaseDocument {
   subscription_tier: string;
   repos_uploaded_count: number;
   max_repos_allowed: number;
+  repos_uploaded_this_month: number;
+  month_reset_date: string;
+  subscription_status: string;
+  subscription_id?: string;
+  plan_id?: string;
+  next_billing_date?: string;
+  subscription_created_at?: string;
   $createdAt: string;
   $updatedAt: string;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  period: 'monthly' | 'yearly';
+  features: string[];
+  razorpay_plan_id: string;
+  repos_limit: number;
+  message_limit: number | null; // null = unlimited
+}
+
+export interface PaymentOrder {
+  id: string;
+  amount: number;
+  currency: string;
+  razorpay_order_id: string;
+  status: 'created' | 'paid' | 'failed';
+}
+
+export interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
 }
 
 // Repository related types
