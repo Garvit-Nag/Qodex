@@ -93,8 +93,13 @@ export default function Navbar() {
                 Features
               </a>
               <Link href="/pricing" className="relative text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white transition-all duration-300 hover:scale-105 transform pb-1 after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-purple-500 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">
-  Pricing
-</Link>
+                Pricing
+              </Link>
+              {user && (
+                <Link href="/explore" className="relative text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white transition-all duration-300 hover:scale-105 transform pb-1 after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-purple-500 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">
+                  Explore
+                </Link>
+              )}
               <a href="#docs" className="relative text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white transition-all duration-300 hover:scale-105 transform pb-1 after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-purple-500 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">
                 Docs
               </a>
@@ -225,14 +230,14 @@ export default function Navbar() {
                       </Link>
                       
                       <Link
-                        href="/repositories"
+                        href="/explore"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
                         <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
-                        My Repositories
+                        AI Chat
                       </Link>
                       
                       <Link

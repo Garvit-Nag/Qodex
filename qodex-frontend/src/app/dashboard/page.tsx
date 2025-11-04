@@ -8,6 +8,7 @@ import { Repository } from '@/types';
 import RepositoryUpload from '@/components/dashboard/RepositoryUpload';
 import RepositoryList from '@/components/dashboard/RepositoryList';
 import SubscriptionInfo from '@/components/dashboard/SubscriptionInfo';
+import UserAnalytics from '@/components/dashboard/UserAnalytics';
 
 export default function Dashboard() {
   const { user, userProfile, refreshUserProfile } = useAuth();
@@ -28,7 +29,6 @@ export default function Dashboard() {
         [Query.equal('user_id', user!.$id)]
       );
       
-      // Type-safe conversion using unknown first, then to Repository[]
       setRepositories(response.documents as unknown as Repository[]);
     } catch (error) {
       console.error('Failed to fetch repositories:', error);
@@ -62,8 +62,13 @@ export default function Dashboard() {
           </p>
         </div>
 
+        {/* Analytics Section */}
+        <UserAnalytics userProfile={userProfile} repositories={repositories} />
+
         {/* Subscription Info */}
-        <SubscriptionInfo userProfile={userProfile} />
+        <div className="mt-8">
+          <SubscriptionInfo userProfile={userProfile} />
+        </div>
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
