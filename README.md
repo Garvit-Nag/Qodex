@@ -7,12 +7,12 @@ AI-powered code-repository chat system. Add GitHub repositories → ask question
 ## 🚀 Live Demo
 Visit [qodex-gules.vercel.app](https://qodex-gules.vercel.app) to see the application in action.
 
-![Dashboard](./public/s1.jpg)
+![Dashboard](qodex-frontend/public/s1.jpg)
 
 ## 📝 Project Overview
 Qodex is an AI-powered chat system for GitHub repositories. Upload any GitHub repository, and Qodex will analyze the code, create embeddings, and let you have intelligent conversations about the codebase. Ask questions about architecture, understand complex functions, or explore how different parts of the code interact.
 
-![Chat Interface](./public/s3.jpg)
+![Chat Interface](qodex-frontend/public/s3.jpg)
 
 ## ✨ Key Features
 
