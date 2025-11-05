@@ -251,21 +251,6 @@ export default function VerifyEmail() {
                 </>
               )}
             </div>
-
-            {/* Help Text */}
-            {status === 'error' && (
-              <div className="text-center">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Need help?{' '}
-                  <Link
-                    href="/support"
-                    className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
-                  >
-                    Contact Support
-                  </Link>
-                </p>
-              </div>
-            )}
           </div>
         </div>
 

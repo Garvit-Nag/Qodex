@@ -37,7 +37,7 @@ export default function AuthCallback() {
         }
 
         setStatus('Redirecting...');
-        router.push('/dashboard');
+        router.push('/');
       } catch (error) {
         console.error('OAuth callback error:', error);
         setStatus('Authentication failed. Redirecting...');
