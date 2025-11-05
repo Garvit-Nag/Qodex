@@ -63,22 +63,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('❌ No avatar in preferences, generating Gravatar...');
       // Generate Gravatar URL as fallback
-      const gravatarUrl = generateGravatarUrl(user.email);
-      return { ...user, avatar: gravatarUrl };
+      return { ...user, avatar: '/profile-logo.png' };
     } catch (error) {
       console.log('❌ Could not enhance user with avatar:', error);
       // Generate Gravatar as ultimate fallback
-      const gravatarUrl = generateGravatarUrl(user.email);
-      return { ...user, avatar: gravatarUrl };
+      return { ...user, avatar: '/profile-logo.png' };
     }
   };
 
-  // Generate Gravatar URL from email
-  const generateGravatarUrl = (email: string) => {
-    // Use browser-compatible MD5 hash
-    const hash = btoa(email.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-    return `https://www.gravatar.com/avatar/${hash}?s=200&d=identicon`;
-  };
 
   const fetchUserProfile = async (userId: string) => {
     try {

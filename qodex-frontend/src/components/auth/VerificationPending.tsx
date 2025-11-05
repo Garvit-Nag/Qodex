@@ -156,19 +156,6 @@ export default function VerificationPending() {
                 Use Different Account
               </button>
             </div>
-
-            {/* Help Text */}
-            <div className="text-center border-t border-gray-200 dark:border-white/20 pt-3">
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Having trouble?{' '}
-                <Link
-                  href="/support"
-                  className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
-                >
-                  Contact Support
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
 
