@@ -39,7 +39,7 @@ export default function BrowserWindow({ className = "" }: BrowserWindowProps) {
         {/* Center - URL Bar */}
         <div className="flex-1 mx-3">
           <div className="bg-white/30 dark:bg-white/10 rounded-md px-2 py-1 text-xs text-gray-700 dark:text-gray-300 font-mono">
-            https://qodex.vercel.app
+            https://qodex-gules.vercel.app
           </div>
         </div>
 
