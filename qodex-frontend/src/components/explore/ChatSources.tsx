@@ -61,7 +61,7 @@ export default function ChatSources({ sources }: ChatSourcesProps) {
                 )}
               </button>
             </div>
-            
+
             {/* Code Content - Just outline, no background */}
             <div className="p-4">
               <pre className="text-xs font-mono text-gray-700 dark:text-white/80 whitespace-pre-wrap overflow-x-auto">

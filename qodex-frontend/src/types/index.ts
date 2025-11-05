@@ -6,11 +6,12 @@ interface BaseDocument extends Models.Document {
   [key: string]: any;
 }
 
-// User related types
+// User related types - ADD AVATAR HERE
 export interface User {
   $id: string;
   name: string;
   email: string;
+  avatar?: string; // 👈 Add this line
   emailVerification?: boolean;
 }
 
@@ -29,6 +30,7 @@ export interface UserProfile extends BaseDocument {
   $updatedAt: string;
 }
 
+// ... rest of your interfaces stay the same
 export interface SubscriptionPlan {
   id: string;
   name: string;
@@ -38,7 +40,7 @@ export interface SubscriptionPlan {
   features: string[];
   razorpay_plan_id: string;
   repos_limit: number;
-  message_limit: number | null; // null = unlimited
+  message_limit: number | null;
 }
 
 export interface PaymentOrder {
@@ -55,19 +57,17 @@ export interface RazorpayResponse {
   razorpay_signature: string;
 }
 
-// Repository related types
 export interface Repository extends BaseDocument {
-  repository_id: number;    // QODEX repository ID
-  name: string;            // Repository name
-  github_url: string;      // GitHub URL
-  status: string;          // Status from QODEX API
-  error_message?: string;  // Error message if failed
-  storage_file_id?: string; // File storage ID (deprecated)
-  quota_used: boolean;     // Quota usage flag
-  user_id: string;         // User who owns it
+  repository_id: number;
+  name: string;
+  github_url: string;
+  status: string;
+  error_message?: string;
+  storage_file_id?: string;
+  quota_used: boolean;
+  user_id: string;
 }
 
-// Conversation and Message types
 export interface Conversation extends BaseDocument {
   user_id: string;
   repository_id: string;
@@ -84,7 +84,6 @@ export interface Message extends BaseDocument {
   created_at: string;
 }
 
-// QODEX API response types
 export interface QodexRepositoryResponse {
   id: number;
   name: string;
@@ -96,15 +95,14 @@ export interface QodexRepositoryResponse {
   updated_at: string;
 }
 
-// Updated to match your actual backend response
 export interface QodexChatResponse {
   response: string;
   sources: Array<{
     file_path: string;
     start_line: number;
     end_line: number;
-    content?: string;        // Optional for compatibility
-    preview?: string;        // Your backend uses this field
+    content?: string;
+    preview?: string;
     similarity: number;
   }>;
   repository_name: string;
@@ -113,7 +111,6 @@ export interface QodexChatResponse {
   success: boolean;
 }
 
-// Chat message interface for frontend
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -122,8 +119,8 @@ export interface ChatMessage {
     file_path: string;
     start_line: number;
     end_line: number;
-    content?: string;        // Can be from direct chat
-    preview?: string;        // Can be from chat history
+    content?: string;
+    preview?: string;
     similarity: number;
   }>;
   timestamp: Date;
@@ -131,7 +128,6 @@ export interface ChatMessage {
   context_chunks_used?: number;
 }
 
-// Chat history response from backend
 export interface QodexChatHistoryResponse {
   conversation_id: number;
   repository_id: number;
@@ -144,7 +140,7 @@ export interface QodexChatHistoryResponse {
       start_line: number;
       end_line: number;
       similarity: number;
-      preview: string;       // Backend uses preview field
+      preview: string;
     }> | null;
     id: number;
     content: string;
@@ -153,7 +149,6 @@ export interface QodexChatHistoryResponse {
   total_messages: number;
 }
 
-// Component prop types
 export interface RepositoryUploadProps {
   onUploadSuccess: () => void;
   userProfile: UserProfile | null;
@@ -169,7 +164,6 @@ export interface SubscriptionInfoProps {
   userProfile: UserProfile | null;
 }
 
-// Auth context types
 export interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;

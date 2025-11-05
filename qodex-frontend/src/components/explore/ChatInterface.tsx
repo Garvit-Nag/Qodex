@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
@@ -12,6 +14,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ChatHeader from './ChatHeader';
 import ChatSources from './ChatSources';
+import CustomLoader from '../ui/LoaderComponent';
 
 interface ChatInterfaceProps {
   repository: Repository;
@@ -45,30 +48,30 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   // All your existing useEffect hooks...
   useEffect(() => {
-  if (repository && user) {
-    // RESET ALL STATE when repository changes
-    setMessages([]);
-    setMessageCount(0);
-    setConversationId(null);
-    setShowQuote(true);
-    setLoadingMessages(true);
-    
-    const repoCreatedAt = new Date(repository.created_at);
-    const now = new Date();
-    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-    
-    const isRecentlyCreated = repoCreatedAt > fiveMinutesAgo;
-    setIsNewRepository(isRecentlyCreated);
-    
-    if (isRecentlyCreated && repository.status !== 'READY') {
-      console.log('🆕 New repository detected, skipping history load');
-      setLoadingMessages(false);
+    if (repository && user) {
+      // RESET ALL STATE when repository changes
+      setMessages([]);
+      setMessageCount(0);
+      setConversationId(null);
       setShowQuote(true);
-    } else {
-      loadChatHistory();
+      setLoadingMessages(true);
+
+      const repoCreatedAt = new Date(repository.created_at);
+      const now = new Date();
+      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+
+      const isRecentlyCreated = repoCreatedAt > fiveMinutesAgo;
+      setIsNewRepository(isRecentlyCreated);
+
+      if (isRecentlyCreated && repository.status !== 'READY') {
+        console.log('🆕 New repository detected, skipping history load');
+        setLoadingMessages(false);
+        setShowQuote(true);
+      } else {
+        loadChatHistory();
+      }
     }
-  }
-}, [repository, user]);
+  }, [repository, user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -101,7 +104,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     setLoadingMessages(true);
     try {
       console.log('🔄 Loading chat history for repository:', repository.repository_id);
-      
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_QODEX_API_URL}/api/v1/chat/${repository.repository_id}/messages`, {
         headers: {
           'X-Client-Secret': process.env.NEXT_PUBLIC_QODEX_CLIENT_SECRET!,
@@ -112,11 +115,11 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       if (response.ok) {
         const chatData = await response.json();
         console.log('✅ Chat history loaded:', chatData);
-        
+
         if (chatData.conversation_id) {
           setConversationId(chatData.conversation_id);
         }
-        
+
         if (chatData.messages && chatData.messages.length > 0) {
           const formattedMessages: ChatMessage[] = chatData.messages.map((msg: any) => ({
             id: msg.id.toString(),
@@ -125,12 +128,12 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
             sources: msg.citations || msg.sources || [],
             timestamp: new Date(msg.created_at),
           }));
-          
+
           setMessages(formattedMessages);
           const userMessages = formattedMessages.filter(msg => msg.role === 'user');
           setMessageCount(userMessages.length);
           setShowQuote(false);
-          
+
           console.log(`📊 Loaded ${formattedMessages.length} messages, ${userMessages.length} from user`);
         } else {
           setShowQuote(true);
@@ -191,7 +194,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
       if (response.ok) {
         const chatData: QodexChatResponse = await response.json();
-        
+
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
@@ -207,7 +210,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       } else {
         const errorData = await response.text();
         console.error('❌ QODEX API Error:', response.status, errorData);
-        
+
         let errorMessage = 'Sorry, I encountered an error while processing your question.';
         try {
           const parsedError = JSON.parse(errorData);
@@ -255,7 +258,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   const getQuotaInfo = () => {
     if (!userProfile) return null;
-    
+
     if (userProfile.subscription_tier === 'premium') {
       return {
         text: 'Unlimited messages',
@@ -263,7 +266,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         showCount: false
       };
     }
-    
+
     const remaining = Math.max(0, 25 - messageCount);
     return {
       text: `${messageCount}/25 messages used`,
@@ -313,7 +316,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     code: ({ inline, children, className }: any) => {
       const isInline = inline !== false && !className?.includes('language-');
       return isInline ? (
-<code className="bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono">
+        <code className="bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono">
           {children}
         </code>
       ) : (
@@ -325,13 +328,13 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       );
     },
     blockquote: ({ children }: any) => (
-    <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-white/90 dark:bg-white/5 pl-4 py-2 my-4 italic rounded-r-lg backdrop-blur-md">
+      <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-white/90 dark:bg-white/5 pl-4 py-2 my-4 italic rounded-r-lg backdrop-blur-md">
 
-    <div className="text-gray-800 dark:text-gray-200">
-      {children}
-    </div>
-  </blockquote>
-),
+        <div className="text-gray-800 dark:text-gray-200">
+          {children}
+        </div>
+      </blockquote>
+    ),
     strong: ({ children }: any) => (
       <strong className="font-semibold text-gray-900 dark:text-white">
         {children}
@@ -347,29 +350,17 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   if (loadingMessages) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-white/70">
-            {isNewRepository ? 'Setting up chat...' : 'Loading chat history...'}
-          </p>
-          {isNewRepository && (
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-              Preparing your new repository
-            </p>
-          )}
-        </div>
-      </div>
+      <CustomLoader />
     );
   }
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Chat Header */}
-      <ChatHeader 
-        repository={repository} 
-        userProfile={userProfile} 
-        messageCount={messageCount} 
+      <ChatHeader
+        repository={repository}
+        userProfile={userProfile}
+        messageCount={messageCount}
       />
 
       {/* Messages with better spacing */}
@@ -380,7 +371,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
           <div className="flex justify-center py-12">
             <div className="text-center max-w-md">
               <p className="text-lg italic text-gray-600 dark:text-gray-400 leading-relaxed">
-                "{currentQuote}"
+                &quot;{currentQuote}&quot;
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
                 Start exploring your codebase by asking a question below
@@ -391,12 +382,11 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[calc(100%-2rem)] ${
-  message.role === 'user' 
-    ? 'bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white' 
-    : 'border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
-} rounded-2xl p-6 shadow-lg transition-all duration-300 break-words`}>
-              
+            <div className={`max-w-[calc(100%-2rem)] ${message.role === 'user'
+                ? 'bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
+                : 'border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
+              } rounded-2xl p-6 shadow-lg transition-all duration-300 break-words`}>
+
               <div className="text-sm leading-relaxed">
                 {message.role === 'user' ? (
                   <div className="whitespace-pre-wrap">{message.content}</div>
@@ -412,7 +402,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
                   </div>
                 ) : (
                   <div className="markdown-content">
-                    <ReactMarkdown 
+                    <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={markdownComponents}
                     >
@@ -421,12 +411,12 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
                   </div>
                 )}
               </div>
-              
+
               {/* Updated Sources */}
               {message.role === 'assistant' && message.sources && Array.isArray(message.sources) && message.sources.length > 0 && (
                 <ChatSources sources={message.sources} />
               )}
-              
+
               {/* Message Footer */}
               <div className={`flex items-center justify-between mt-4 pt-3 border-t border-gray-300 dark:border-white/30`}>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -441,7 +431,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
             </div>
           </div>
         ))}
-        
+
         {/* Loading Animation */}
         {loading && (
           <div className="flex justify-start">
@@ -464,7 +454,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -479,7 +469,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
                   Message limit reached (25/25)
                 </p>
                 <p className="text-xs text-red-600 dark:text-red-400">
-                  You've reached the free tier limit for this repository
+                  You&apos;ve reached the free tier limit for this repository
                 </p>
               </div>
             </div>
@@ -495,7 +485,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       )}
 
       {/* Fixed Input Area with Inline Send Button */}
- <div className="border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5 px-4 py-4">
+      <div className="border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5 px-4 py-4">
 
         <div className="relative flex items-center">
           <textarea

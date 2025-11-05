@@ -56,17 +56,20 @@ export default function Hero() {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto">
           {/* Get Started - Same color as navbar button */}
-            <Link
-              href="/dashboard"
-              className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 shadow-lg border border-white/20 dark:border-gray-400/20 inline-block"
-            >
-              Get Started
-            </Link>
-  
+          <Link
+            href="/dashboard"
+            className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 shadow-lg border border-white/20 dark:border-gray-400/20 inline-block"
+          >
+            Get Started
+          </Link>
+
           {/* View Demo - Purple theme in light mode, original glassmorphism in dark mode */}
-          <button className="bg-white/10 dark:bg-white/10 backdrop-blur-sm hover:bg-white/20 dark:hover:bg-white/20 text-gray-900 dark:text-white font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 border border-white/20 dark:border-white/20 hover:border-white/30 dark:hover:border-white/30">
+          <Link
+            href="/about"
+            className="inline-block bg-white/10 dark:bg-white/10 backdrop-blur-sm hover:bg-white/20 dark:hover:bg-white/20 text-gray-900 dark:text-white font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 border border-white/20 dark:border-white/20 hover:border-white/30 dark:hover:border-white/30"
+          >
             View Demo
-          </button>
+          </Link>
         </div>
       </div>
     </section>

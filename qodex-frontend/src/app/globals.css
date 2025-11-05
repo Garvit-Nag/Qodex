@@ -66,3 +66,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  :root {
+    --chart-1: 262 83% 58%;
+    --chart-2: 213 94% 68%;
+    --chart-3: 232 75% 64%;
+    --chart-4: 295 87% 71%;
+    --chart-5: 336 84% 76%;
+  }
+
+  .dark {
+    --chart-1: 262 83% 58%;
+    --chart-2: 213 94% 68%;
+    --chart-3: 232 75% 64%;
+    --chart-4: 295 87% 71%;
+    --chart-5: 336 84% 76%;
+  }
+}

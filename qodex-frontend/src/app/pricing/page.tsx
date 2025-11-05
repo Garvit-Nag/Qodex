@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,6 +6,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe';
 import DemoCardModal from '@/components/pricing/DemoCardModal';
 import SubscriptionManager from '@/components/pricing/SubscriptionManager';
+import AuthRequiredModal from '@/components/pricing/AuthRequiredModal';
+import PremiumAlertModal from '@/components/pricing/PremiumAlertModal';
 import Navbar from '@/components/layout/Navbar';
 import LiquidEther from '@/components/LiquidEther';
 import { Rocket, Crown } from 'lucide-react';
@@ -13,6 +16,8 @@ export default function PricingPage() {
   const { user, userProfile, refreshUserProfile } = useAuth();
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [showSubscriptionManager, setShowSubscriptionManager] = useState(false);
+  const [showAuthRequiredModal, setShowAuthRequiredModal] = useState(false);
+  const [showPremiumAlertModal, setShowPremiumAlertModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Handle payment success
@@ -44,16 +49,19 @@ export default function PricingPage() {
   }, [user, refreshUserProfile]);
 
   const handleUpgrade = async () => {
+    // Check if user is signed in
     if (!user) {
-      alert('Please sign in to upgrade your plan');
+      setShowAuthRequiredModal(true);
       return;
     }
 
+    // Check if user is already premium
     if (userProfile?.subscription_tier === 'premium') {
-      alert('You are already on the premium plan');
+      setShowPremiumAlertModal(true);
       return;
     }
 
+    // Proceed with upgrade flow
     setShowDemoModal(true);
   };
 
@@ -250,7 +258,7 @@ export default function PricingPage() {
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <div className="bg-white/90 shadow-lg dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-2xl p-6 text-left">
                 <h3 className="font-bold text-lg mb-3 text-gray-900 dark:text-white">Can I cancel anytime?</h3>
-                <p className="text-gray-700 dark:text-white/80">Yes! Cancel your subscription anytime. You'll keep access until your billing period ends.</p>
+                <p className="text-gray-700 dark:text-white/80">Yes! Cancel your subscription anytime. You&apos;ll keep access until your billing period ends.</p>
               </div>
               <div className="bg-white/90 shadow-lg dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-2xl p-6 text-left">
                 <h3 className="font-bold text-lg mb-3 text-gray-900 dark:text-white">What happens to my data?</h3>
@@ -272,6 +280,19 @@ export default function PricingPage() {
       {showSubscriptionManager && (
         <SubscriptionManager
           onClose={() => setShowSubscriptionManager(false)}
+        />
+      )}
+
+      {showAuthRequiredModal && (
+        <AuthRequiredModal
+          onClose={() => setShowAuthRequiredModal(false)}
+        />
+      )}
+
+      {showPremiumAlertModal && (
+        <PremiumAlertModal
+          onClose={() => setShowPremiumAlertModal(false)}
+          onManageSubscription={() => setShowSubscriptionManager(true)}
         />
       )}
     </div>

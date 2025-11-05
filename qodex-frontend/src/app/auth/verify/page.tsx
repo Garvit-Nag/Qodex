@@ -8,11 +8,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import CustomLoader from '@/components/ui/LoaderComponent';
 
 export default function VerifyEmail() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'resending'>('loading');
   const [message, setMessage] = useState('');
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const { verifyEmail, sendVerificationEmail, user } = useAuth();
@@ -36,7 +37,7 @@ export default function VerifyEmail() {
       await verifyEmail(userId, secret);
       setStatus('success');
       setMessage('Email verified successfully! You can now access all features.');
-      
+
       // Redirect to home after 3 seconds
       setTimeout(() => {
         router.push('/');
@@ -92,9 +93,9 @@ export default function VerifyEmail() {
         {/* Status Icons */}
         <div className="flex justify-center">
           {status === 'loading' && (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+            <CustomLoader />
           )}
-          
+
           {status === 'success' && (
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +103,7 @@ export default function VerifyEmail() {
               </svg>
             </div>
           )}
-          
+
           {status === 'error' && (
             <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,9 +111,9 @@ export default function VerifyEmail() {
               </svg>
             </div>
           )}
-          
+
           {status === 'resending' && (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <CustomLoader />
           )}
         </div>
 
@@ -157,7 +158,7 @@ export default function VerifyEmail() {
                   Sign In to Resend
                 </Link>
               )}
-              
+
               <Link
                 href="/"
                 className="inline-block w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium py-3 px-6 rounded-lg transition-colors"

@@ -14,14 +14,14 @@ interface ChatHeaderProps {
 export default function ChatHeader({ repository, userProfile, messageCount }: ChatHeaderProps) {
   const getQuotaInfo = () => {
     if (!userProfile) return null;
-    
+
     if (userProfile.subscription_tier === 'premium') {
       return {
         text: 'Unlimited messages',
         color: 'text-green-600 dark:text-green-400',
       };
     }
-    
+
     return {
       text: `${messageCount}/25 messages used`,
       color: messageCount >= 20 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-white/60',
@@ -59,7 +59,7 @@ export default function ChatHeader({ repository, userProfile, messageCount }: Ch
             )}
           </div>
         </div>
-        
+
         <Link
           href={repository.github_url}
           target="_blank"

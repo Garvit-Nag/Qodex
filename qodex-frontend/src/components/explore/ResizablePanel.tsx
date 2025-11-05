@@ -49,13 +49,13 @@ export default function ResizablePanel({
   }, [isResizing, minWidth, maxWidth, onResize]);
 
   return (
-    <div 
+    <div
       ref={panelRef}
       className="relative bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-3xl shadow-xl"
       style={{ width }}
     >
       {children}
-      
+
       {/* Resize Handle */}
       <div
         className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-purple-400/50 transition-colors group"

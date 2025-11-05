@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { databases, DATABASE_ID, REPOSITORIES_COLLECTION_ID, ID } from '@/lib/appwrite';
 import { UserProfile } from '@/types';
-import { X, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
 
 interface RepoUploadModalProps {
   onClose: () => void;

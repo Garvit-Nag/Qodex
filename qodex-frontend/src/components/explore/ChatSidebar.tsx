@@ -38,7 +38,7 @@ export default function ChatSidebar({
   const handleRepoClick = (repo: Repository) => {
     const currentStatus = getRepoStatus(repo);
     console.log('🖱️ Sidebar: Repository clicked:', repo.name, 'Status:', currentStatus);
-    
+
     if (currentStatus.toLowerCase() === 'ready') {
       onRepoSelect(repo);
     } else {
@@ -83,19 +83,17 @@ export default function ChatSidebar({
               const isSelected = selectedRepo?.$id === repo.$id;
               const currentStatus = getRepoStatus(repo);
               const isReady = currentStatus.toLowerCase() === 'ready';
-              
+
               return (
                 <div
                   key={repo.$id}
-                  className={`relative rounded-xl p-3 transition-all duration-300 ${
-                    isReady ? 'cursor-pointer' : 'cursor-default'
-                  } ${
-                    isSelected
+                  className={`relative rounded-xl p-3 transition-all duration-300 ${isReady ? 'cursor-pointer' : 'cursor-default'
+                    } ${isSelected
                       ? 'bg-white/80 dark:bg-white/10 shadow-lg border border-gray-300 dark:border-white/30'
                       : isReady
-                      ? 'hover:bg-gray-100 dark:hover:bg-white/5'
-                      : 'opacity-50'
-                  }`}
+                        ? 'hover:bg-gray-100 dark:hover:bg-white/5'
+                        : 'opacity-50'
+                    }`}
                   onClick={() => handleRepoClick(repo)}
                   onMouseEnter={() => setHoveredRepo(repo.$id)}
                   onMouseLeave={() => setHoveredRepo(null)}
@@ -106,7 +104,7 @@ export default function ChatSidebar({
                         {repo.name}
                       </p>
                     </div>
-                    
+
                     {isReady && hoveredRepo === repo.$id && (
                       <button
                         onClick={(e) => handleDelete(e, repo.$id)}

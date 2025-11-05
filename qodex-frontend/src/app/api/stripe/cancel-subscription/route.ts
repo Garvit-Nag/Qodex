@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { databases, DATABASE_ID, USER_PROFILES_COLLECTION_ID } from '@/lib/appwrite';

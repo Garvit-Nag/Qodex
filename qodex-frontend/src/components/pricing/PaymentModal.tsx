@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -22,7 +23,7 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
 
   const handlePayment = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     setError(null);
 

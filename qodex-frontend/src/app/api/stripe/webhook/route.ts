@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // ✅ Get raw body as ArrayBuffer then convert to Buffer
     const arrayBuffer = await request.arrayBuffer();
     const body = Buffer.from(arrayBuffer);
-    
+
     const signature = request.headers.get('stripe-signature');
 
     if (!signature) {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed':
         const session = event.data.object;
         console.log('💳 Payment completed:', session.id);
-        
+
         // Update user subscription
         if (session.metadata?.userId && session.metadata?.planId) {
           await updateUserSubscription(
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.deleted':
         const subscription = event.data.object;
         console.log('❌ Subscription cancelled:', subscription.id);
-        
+
         // Handle subscription cancellation
         if (subscription.metadata?.userId) {
           await cancelUserSubscription(subscription.metadata.userId);

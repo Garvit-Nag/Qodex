@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 import { databases, DATABASE_ID, REPOSITORIES_COLLECTION_ID } from '@/lib/appwrite';
 import { Query } from 'appwrite';
 import { Repository } from '@/types';
@@ -10,22 +12,34 @@ import LiquidEther from '@/components/LiquidEther';
 import ChatSidebar from '@/components/explore/ChatSidebar';
 import ChatMainPanel from '@/components/explore/ChatMainPanel';
 import RepoUploadModal from '@/components/explore/RepoUploadModal';
+import DeleteConfirmModal from '@/components/explore/DeleteConfirmModal';
+import CustomDropdown from '@/components/explore/CustomDropdown';
 import { Plus, Trash2 } from 'lucide-react';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import CustomDropdown from '@/components/explore/CustomDropdown';
+import CustomLoader from '@/components/ui/LoaderComponent';
 
 export default function ExplorePage() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, userProfile, refreshUserProfile } = useAuth();
+  const router = useRouter();
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [repoStatuses, setRepoStatuses] = useState<{[key: string]: string}>({});
+  const [repoStatuses, setRepoStatuses] = useState<{ [key: string]: string }>({});
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [repoToDelete, setRepoToDelete] = useState<{ id: string, name: string } | null>(null);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin');
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     if (user) {
@@ -44,16 +58,16 @@ export default function ExplorePage() {
                 'X-User-ID': repo.user_id,
               }
             });
-            
+
             if (response.ok) {
               const statusData = await response.json();
               const newStatus = statusData.status;
-              
+
               setRepoStatuses(prev => ({
                 ...prev,
                 [repo.$id]: newStatus
               }));
-              
+
               if (newStatus !== repo.status) {
                 await databases.updateDocument(
                   DATABASE_ID,
@@ -61,11 +75,11 @@ export default function ExplorePage() {
                   repo.$id,
                   { status: newStatus }
                 );
-                
-                setRepositories(prev => prev.map(r => 
+
+                setRepositories(prev => prev.map(r =>
                   r.$id === repo.$id ? { ...r, status: newStatus } : r
                 ));
-                
+
                 if (newStatus.toLowerCase() === 'ready' && !selectedRepo) {
                   console.log('🎯 Auto-selecting newly ready repository:', repo.name);
                   const updatedRepo = { ...repo, status: newStatus };
@@ -94,10 +108,10 @@ export default function ExplorePage() {
         REPOSITORIES_COLLECTION_ID,
         [Query.equal('user_id', user!.$id)]
       );
-      
+
       const repos = response.documents as unknown as Repository[];
       setRepositories(repos);
-      
+
       if (!selectedRepo) {
         const readyRepo = repos.find(repo => repo.status?.toLowerCase() === 'ready');
         if (readyRepo) {
@@ -105,7 +119,7 @@ export default function ExplorePage() {
           setSelectedRepo(readyRepo);
         }
       }
-      
+
       if (repos.length === 0) {
         setShowUploadModal(true);
       }
@@ -135,7 +149,7 @@ export default function ExplorePage() {
   const handleRepoSelect = (repo: Repository) => {
     const currentStatus = getRepoStatus(repo);
     console.log('🖱️ Repository clicked:', repo.name, 'Status:', currentStatus);
-    
+
     if (currentStatus.toLowerCase() === 'ready') {
       const updatedRepo = { ...repo, status: currentStatus };
       setSelectedRepo(updatedRepo);
@@ -146,177 +160,194 @@ export default function ExplorePage() {
   };
 
   const handleRepoDelete = async (repoId: string) => {
-    if (!confirm('Are you sure you want to delete this repository? This action cannot be undone.')) {
-      return;
+    const repo = repositories.find(r => r.$id === repoId);
+    if (repo) {
+      setRepoToDelete({ id: repoId, name: repo.name });
+      setShowDeleteModal(true);
     }
+  };
+
+  const confirmDelete = async () => {
+    if (!repoToDelete) return;
 
     try {
-      await databases.deleteDocument(DATABASE_ID, REPOSITORIES_COLLECTION_ID, repoId);
-      setRepositories(prev => prev.filter(repo => repo.$id !== repoId));
-      
-      if (selectedRepo?.$id === repoId) {
+      await databases.deleteDocument(DATABASE_ID, REPOSITORIES_COLLECTION_ID, repoToDelete.id);
+      setRepositories(prev => prev.filter(repo => repo.$id !== repoToDelete.id));
+
+      if (selectedRepo?.$id === repoToDelete.id) {
         setSelectedRepo(null);
-        
-        const remainingRepos = repositories.filter(repo => repo.$id !== repoId);
-        const nextReadyRepo = remainingRepos.find(repo => 
+
+        const remainingRepos = repositories.filter(repo => repo.$id !== repoToDelete.id);
+        const nextReadyRepo = remainingRepos.find(repo =>
           getRepoStatus(repo).toLowerCase() === 'ready'
         );
         if (nextReadyRepo) {
           setSelectedRepo(nextReadyRepo);
         }
       }
-      
+
       refreshUserProfile();
+      setShowDeleteModal(false);
+      setRepoToDelete(null);
     } catch (error) {
       console.error('Failed to delete repository:', error);
-      alert('Failed to delete repository. Please try again.');
     }
   };
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-        </div>
-      </div>
+      <CustomLoader />
     );
   }
 
   return (
-  <div className="min-h-screen bg-white dark:bg-black">
-    <Navbar />
+    <div className="min-h-screen bg-white dark:bg-black">
+      <Navbar />
 
-    {/* Background */}
-    <div className="fixed inset-0 z-0">
-      <LiquidEther
-        colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
-        mouseForce={15}
-        cursorSize={80}
-        resolution={0.4}
-        autoDemo={true}
-        autoSpeed={0.3}
-        autoIntensity={1.8}
-      />
-    </div>
-    
-    {/* Custom Scrollbar Styles */}
-    <style jsx global>{`
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(156, 163, 175, 0.3);
-        border-radius: 3px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(156, 163, 175, 0.5);
-      }
-      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-      }
-      .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
-    `}</style>
-    
-    {/* Main Content - Blur entire page when dropdown is open */}
-    <div className="relative z-10 pt-20">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="h-[calc(100vh-5rem)] py-6">
-          
-          {/* Desktop Layout - Hidden on mobile */}
-          <div className="hidden md:block h-full">
-            <ResizablePanelGroup direction="horizontal" className="h-full gap-4">
-              {/* Your existing desktop panels... */}
-              <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="min-w-[280px]">
-                <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden">
-                  <ChatSidebar
-                    repositories={repositories}
-                    selectedRepo={selectedRepo}
-                    onRepoSelect={handleRepoSelect}
-                    onNewChat={handleNewChat}
-                    onRepoDelete={handleRepoDelete}
-                    loading={loading}
-                    userProfile={userProfile}
-                    getRepoStatus={getRepoStatus}
-                  />
-                </div>
-              </ResizablePanel>
+      {/* Background */}
+      <div className="fixed inset-0 z-0">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          mouseForce={15}
+          cursorSize={80}
+          resolution={0.4}
+          autoDemo={true}
+          autoSpeed={0.3}
+          autoIntensity={1.8}
+        />
+      </div>
 
-              <ResizableHandle 
-                withHandle 
-                className="w-2 bg-white/50 dark:bg-white/5 relative border border-gray-300 dark:border-white/20 rounded-lg backdrop-blur-sm"
-              >
-                <div className="w-0.5 h-full bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                <div className="absolute w-4 h-8 bg-gray-400 dark:bg-gray-500 rounded-full border-2 border-white dark:border-gray-900 shadow-lg cursor-col-resize"></div>
-              </ResizableHandle>
+      {/* Custom Scrollbar Styles */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(156, 163, 175, 0.3);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(156, 163, 175, 0.5);
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      `}</style>
 
-              <ResizablePanel defaultSize={75} className="min-w-[400px]">
-                <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden">
-                  <ChatMainPanel
-                    selectedRepo={selectedRepo}
-                    userProfile={userProfile}
-                  />
-                </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
+      {/* Main Content */}
+      <div className="relative z-10 pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="h-[calc(100vh-5rem)] py-6">
+
+            {/* Desktop Layout - Hidden on mobile */}
+            <div className="hidden md:block h-full">
+              <ResizablePanelGroup direction="horizontal" className="h-full gap-4">
+                {/* Sidebar Panel */}
+                <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="min-w-[280px]">
+                  <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+                    <ChatSidebar
+                      repositories={repositories}
+                      selectedRepo={selectedRepo}
+                      onRepoSelect={handleRepoSelect}
+                      onNewChat={handleNewChat}
+                      onRepoDelete={handleRepoDelete}
+                      loading={loading}
+                      userProfile={userProfile}
+                      getRepoStatus={getRepoStatus}
+                    />
+                  </div>
+                </ResizablePanel>
+
+                {/* Resizable Handle */}
+                <ResizableHandle
+                  withHandle
+                  className="w-2 bg-white/50 dark:bg-white/5 relative border border-gray-300 dark:border-white/20 rounded-lg backdrop-blur-sm"
+                >
+                  <div className="w-0.5 h-full bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                  <div className="absolute w-4 h-8 bg-gray-400 dark:bg-gray-500 rounded-full border-2 border-white dark:border-gray-900 shadow-lg cursor-col-resize"></div>
+                </ResizableHandle>
+
+                {/* Main Chat Panel */}
+                <ResizablePanel defaultSize={75} className="min-w-[400px]">
+                  <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden">
+                    <ChatMainPanel
+                      selectedRepo={selectedRepo}
+                      userProfile={userProfile}
+                    />
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+
+            {/* Mobile Layout - Hidden on desktop */}
+            <div className="md:hidden h-full flex flex-col gap-4">
+              {/* Mobile Header - NEVER BLURS */}
+              <div className="relative z-[9998] flex items-center gap-2 p-4 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl">
+                <button
+                  onClick={handleNewChat}
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 font-medium shadow-lg"
+                >
+                  <Plus className="w-4 h-4" />
+                  New Chat
+                </button>
+
+                <CustomDropdown
+                  repositories={repositories}
+                  selectedRepo={selectedRepo}
+                  onRepoSelect={handleRepoSelect}
+                  getRepoStatus={getRepoStatus}
+                  onOpenChange={setIsDropdownOpen}
+                />
+
+                {selectedRepo && (
+                  <button
+                    onClick={() => handleRepoDelete(selectedRepo.$id)}
+                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                  </button>
+                )}
+              </div>
+
+              {/* Mobile Chat Panel - THIS GETS BLURRED */}
+              <div className={`flex-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 ${isDropdownOpen ? 'blur-sm pointer-events-none' : ''}`}>
+                <ChatMainPanel
+                  selectedRepo={selectedRepo}
+                  userProfile={userProfile}
+                />
+              </div>
+            </div>
+
           </div>
-
-          {/* Mobile Layout - Hidden on desktop */}
-<div className="md:hidden h-full flex flex-col gap-4">
-  {/* Mobile Header - NEVER BLURS */}
-  <div className="relative z-[9998] flex items-center gap-2 p-4 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl">
-    <button
-      onClick={handleNewChat}
-      className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 font-medium shadow-lg"
-    >
-      <Plus className="w-4 h-4" />
-      New Chat
-    </button>
-    
-    <CustomDropdown
-      repositories={repositories}
-      selectedRepo={selectedRepo}
-      onRepoSelect={handleRepoSelect}
-      getRepoStatus={getRepoStatus}
-      onOpenChange={setIsDropdownOpen}
-    />
-    
-    {selectedRepo && (
-      <button
-        onClick={() => handleRepoDelete(selectedRepo.$id)}
-        className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-      >
-        <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
-      </button>
-    )}
-  </div>
-  
-  {/* Mobile Chat Panel - THIS GETS BLURRED */}
-  <div className={`flex-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 ${isDropdownOpen ? 'blur-sm pointer-events-none' : ''}`}>
-    <ChatMainPanel
-      selectedRepo={selectedRepo}
-      userProfile={userProfile}
-    />
-  </div>
-</div>
         </div>
       </div>
-    </div>
 
-    {/* Upload Modal */}
-    {showUploadModal && (
-      <RepoUploadModal
-        onClose={() => setShowUploadModal(false)}
-        onUploadSuccess={handleUploadSuccess}
-        userProfile={userProfile}
-      />
-    )}
-  </div>
-);
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <RepoUploadModal
+          onClose={() => setShowUploadModal(false)}
+          onUploadSuccess={handleUploadSuccess}
+          userProfile={userProfile}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && repoToDelete && (
+        <DeleteConfirmModal
+          repoName={repoToDelete.name}
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setRepoToDelete(null);
+          }}
+        />
+      )}
+    </div>
+  );
 }

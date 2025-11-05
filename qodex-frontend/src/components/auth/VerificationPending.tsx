@@ -52,20 +52,20 @@ export default function VerificationPending() {
             priority
           />
         </Link>
-        
+
         {/* Email Icon */}
         <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto">
           <svg className="w-10 h-10 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        
+
         {/* Content */}
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Check Your Email
           </h1>
-          
+
           <div className="space-y-2">
             <p className="text-gray-600 dark:text-gray-400">
               We&apos;ve sent a verification link to:
@@ -74,7 +74,7 @@ export default function VerificationPending() {
               {user?.email}
             </p>
           </div>
-          
+
           <p className="text-sm text-gray-500 dark:text-gray-500">
             Click the link in the email to verify your account and access Qodex.
             Don&apos;t forget to check your spam folder!
@@ -100,7 +100,7 @@ export default function VerificationPending() {
               'Resend Verification Email'
             )}
           </button>
-          
+
           <button
             onClick={handleSignOut}
             className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium py-3 px-6 rounded-lg transition-colors"

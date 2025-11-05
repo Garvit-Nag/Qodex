@@ -12,10 +12,10 @@ interface CustomDropdownProps {
   onOpenChange: (isOpen: boolean) => void; // Add this prop
 }
 
-export default function CustomDropdown({ 
-  repositories, 
-  selectedRepo, 
-  onRepoSelect, 
+export default function CustomDropdown({
+  repositories,
+  selectedRepo,
+  onRepoSelect,
   getRepoStatus,
   onOpenChange
 }: CustomDropdownProps) {
@@ -59,36 +59,35 @@ export default function CustomDropdown({
 
       {/* Dropdown Menu - Super high z-index */}
       {/* Dropdown Menu - True black/gray colors, no blue tint */}
-{isOpen && (
-  <div className="absolute top-full left-0 right-0 mt-2 z-[9999] bg-white/98 dark:bg-black/95 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-xl shadow-2xl overflow-hidden">
-    <div className="max-h-60 overflow-y-auto custom-scrollbar">
-      {readyRepos.length === 0 ? (
-        <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
-          No repositories ready for chat
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-2 z-[9999] bg-white/98 dark:bg-black/95 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-xl shadow-2xl overflow-hidden">
+          <div className="max-h-60 overflow-y-auto custom-scrollbar">
+            {readyRepos.length === 0 ? (
+              <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                No repositories ready for chat
+              </div>
+            ) : (
+              readyRepos.map((repo) => (
+                <button
+                  key={repo.$id}
+                  onClick={() => handleSelect(repo)}
+                  className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 ${selectedRepo?.$id === repo.$id
+                      ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white font-medium'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
+                    }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="truncate">{repo.name}</span>
+                    {selectedRepo?.$id === repo.$id && (
+                      <div className="w-2 h-2 bg-gray-900 dark:bg-gray-200 rounded-full"></div>
+                    )}
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
         </div>
-      ) : (
-        readyRepos.map((repo) => (
-          <button
-            key={repo.$id}
-            onClick={() => handleSelect(repo)}
-            className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 ${
-              selectedRepo?.$id === repo.$id
-                ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white font-medium'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="truncate">{repo.name}</span>
-              {selectedRepo?.$id === repo.$id && (
-                <div className="w-2 h-2 bg-gray-900 dark:bg-gray-200 rounded-full"></div>
-              )}
-            </div>
-          </button>
-        ))
       )}
-    </div>
-  </div>
-)}
     </div>
   );
 }

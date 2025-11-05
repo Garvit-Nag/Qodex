@@ -1,6 +1,6 @@
 'use client';
 
-import { Repository, UserProfile } from '@/types';
+import { Repository } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
 import Navbar from '@/components/layout/Navbar';
 import LiquidEther from '@/components/LiquidEther';
@@ -77,8 +77,8 @@ export default function ChatLayout({
               {/* Main Chat Panel */}
               <ResizablePanel defaultSize={75}>
                 <div className="h-full ml-3">
-                  <ChatMainPanel 
-                    selectedRepo={selectedRepo} 
+                  <ChatMainPanel
+                    selectedRepo={selectedRepo}
                     userProfile={userProfile}
                   />
                 </div>

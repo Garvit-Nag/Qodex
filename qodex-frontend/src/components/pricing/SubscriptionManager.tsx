@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -64,7 +65,7 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
               Subscription Cancelled
             </h2>
             <p className="text-muted-foreground text-sm">
-              You'll continue to have access until your current billing period ends.
+              You&apos;ll continue to have access until your current billing period ends.
             </p>
           </div>
 

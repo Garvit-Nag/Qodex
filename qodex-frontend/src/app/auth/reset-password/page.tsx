@@ -5,188 +5,245 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import DotGrid from '@/components/DotGrid';
+import BrowserWindow from '@/components/ui/BrowserWindow';
+import Navbar from '@/components/layout/Navbar';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  
+  const [successMessage, setSuccessMessage] = useState('');
+  const [userId, setUserId] = useState('');
+  const [secret, setSecret] = useState('');
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  useEffect(() => {
+    const userIdParam = searchParams.get('userId');
+    const secretParam = searchParams.get('secret');
 
-  if (password !== confirmPassword) {
-    setError('Passwords do not match');
-    setLoading(false);
-    return;
-  }
-
-  if (password.length < 8) {
-    setError('Password must be at least 8 characters long');
-    setLoading(false);
-    return;
-  }
-
-  const userId = searchParams.get('userId');
-  const secret = searchParams.get('secret');
-
-  if (!userId || !secret) {
-    setError('Invalid reset link. Please request a new password reset.');
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const { account } = await import('@/lib/appwrite');
-    // Correct method signature: updateRecovery(userId, secret, password)
-    await account.updateRecovery(userId, secret, password);
-    setSuccess(true);
-    setTimeout(() => {
-      router.push('/auth/signin');
-    }, 3000);
-  } catch (err: any) {
-    console.error('Password reset error:', err);
-    if (err.message?.includes('Invalid credentials') || err.code === 401) {
-      setError('Invalid or expired reset link. Please request a new password reset.');
-    } else {
-      setError(err.message || 'Failed to reset password. Please try again.');
+    if (!userIdParam || !secretParam) {
+      setError('Invalid reset link. Please request a new password reset.');
+      return;
     }
-  } finally {
-    setLoading(false);
-  }
-};
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-        <div className="text-center max-w-md w-full space-y-6 p-8">
-          <Image
-            src="/logo_light.png"
-            alt="QODEX Logo"
-            width={120}
-            height={40}
-            className="mx-auto dark:hidden"
-            priority
-          />
-          <Image
-            src="/logo_dark.png"
-            alt="QODEX Logo"
-            width={120}
-            height={40}
-            className="mx-auto hidden dark:block"
-            priority
-          />
-          
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Password Reset Successful!
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Your password has been updated. Redirecting to sign in...
-          </p>
-        </div>
-      </div>
-    );
-  }
+
+    setUserId(userIdParam);
+    setSecret(secretParam);
+  }, [searchParams]);
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccessMessage('');
+
+    // Validation
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      setLoading(false);
+      return;
+    }
+
+    if (!userId || !secret) {
+      setError('Invalid reset link. Please request a new password reset.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { account } = await import('@/lib/appwrite');
+      await account.updateRecovery(userId, secret, password);
+      setSuccessMessage('Password reset successfully! Redirecting to sign in...');
+      setTimeout(() => {
+        router.push('/auth/signin');
+      }, 3000);
+    } catch (err: any) {
+      if (err.message?.includes('expired')) {
+        setError('Reset link has expired. Please request a new password reset.');
+      } else if (err.message?.includes('invalid')) {
+        setError('Invalid reset link. Please request a new password reset.');
+      } else if (err.message?.includes('password')) {
+        setError('Password must be at least 8 characters long and contain letters and numbers.');
+      } else {
+        setError(err.message || 'Failed to reset password. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div className="text-center">
-          <Link href="/" className="inline-block">
-            <Image
-              src="/logo_light.png"
-              alt="QODEX Logo"
-              width={120}
-              height={40}
-              className="mx-auto dark:hidden"
-              priority
-            />
-            <Image
-              src="/logo_dark.png"
-              alt="QODEX Logo"
-              width={120}
-              height={40}
-              className="mx-auto hidden dark:block"
-              priority
-            />
-          </Link>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
-            Set New Password
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Enter your new password below
-          </p>
+    <div className="h-screen overflow-hidden bg-white dark:bg-black relative">
+      {/* Full Background DotGrid */}
+      <div className="absolute inset-0 z-0">
+        <DotGrid
+          dotSize={5}
+          gap={15}
+          proximity={120}
+          shockRadius={250}
+          shockStrength={5}
+          resistance={750}
+          returnDuration={1.5}
+        />
+      </div>
+
+      {/* Translucent Navbar */}
+      <div className="relative z-50">
+        <Navbar />
+      </div>
+
+      {/* Main Content - SAME LAYOUT AS SIGN-IN */}
+      <div className="absolute inset-0 pt-16 z-10 flex items-center justify-center px-8 gap-16">
+        {/* Reset Password Box - EXACT SAME SIZE AS SIGN-IN */}
+        <div className="w-96 flex-shrink-0">
+          <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 space-y-5">
+            {/* Logo */}
+            <div className="text-center">
+              <Link href="/" className="inline-block">
+                <Image
+                  src="/logo_light.png"
+                  alt="QODEX Logo"
+                  width={100}
+                  height={32}
+                  className="mx-auto dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/logo_dark.png"
+                  alt="QODEX Logo"
+                  width={100}
+                  height={32}
+                  className="mx-auto hidden dark:block"
+                  priority
+                />
+              </Link>
+              <h2 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
+                Reset your password
+              </h2>
+              <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                Enter your new password below
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-xs font-medium">{error}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-3 py-2 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-xs font-medium">{successMessage}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Reset Password Form */}
+            <form className="space-y-3" onSubmit={handleResetPassword}>
+              <div>
+                <label htmlFor="password" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  New password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError('');
+                  }}
+                  className="w-full px-3 py-2.5 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 text-sm"
+                  placeholder="Enter your new password"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Confirm new password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setError('');
+                  }}
+                  className="w-full px-3 py-2.5 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 text-sm"
+                  placeholder="Confirm your new password"
+                />
+              </div>
+
+              {/* Password Requirements */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg backdrop-blur-sm">
+                <p className="text-xs">
+                  Password must be at least 8 characters long and contain letters and numbers.
+                </p>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading || !userId || !secret}
+                  className="w-full flex justify-center py-2.5 px-4 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-sm"
+                >
+                  {loading ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white dark:text-black" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Resetting password...
+                    </span>
+                  ) : (
+                    'Reset password'
+                  )}
+                </button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Remember your password?{' '}
+                  <Link
+                    href="/auth/signin"
+                    className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </div>
         </div>
 
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <form className="mt-8 space-y-6" onSubmit={handleResetPassword}>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              New Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              placeholder="Enter new password"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Confirm New Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              placeholder="Confirm new password"
-            />
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Updating Password...' : 'Update Password'}
-            </button>
-          </div>
-
-          <div className="text-center">
-            <Link
-              href="/auth/signin"
-              className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
-            >
-              Back to Sign In
-            </Link>
-          </div>
-        </form>
+        {/* Browser Window - SAME AS SIGN-IN */}
+        <div className="hidden xl:flex flex-shrink-0 items-center">
+          <BrowserWindow className="w-[800px]" />
+        </div>
       </div>
     </div>
   );
