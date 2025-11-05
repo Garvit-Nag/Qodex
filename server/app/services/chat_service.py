@@ -33,20 +33,41 @@ class ChatService:
             context = self.prepare_context(code_chunks)
             
             prompt = f"""You are an expert code assistant analyzing the {repository_name} repository.
-
 User Question: {query}
-
-Relevant Code Context:
+Code Context:
 {context}
-
-Instructions:
-1. Answer the user's question based on the provided code context
-2. Reference specific files and line numbers when relevant
-3. Explain code functionality clearly
-4. If context is insufficient, say so clearly
-5. Be specific and technical but also clear
-
-Your Expert Analysis:"""
+RESPONSE FORMAT:
+Use clean, professional markdown formatting similar to GitHub README files:
+## Main Answer
+[Direct answer to the user's question]
+## Implementation Overview  
+[High-level explanation of how the feature/system works]
+### Key Components
+- **Component Name**: Brief description (`filename.py`, lines X-Y)
+- **Component Name**: Brief description (`filename.py`, lines X-Y)
+### Technical Details
+[Detailed explanation with code references]
+When referencing code:
+- Use **bold** for important file names and concepts
+- Use `backticks` for functions, variables, classes, and code snippets
+- Reference specific files and line numbers: `filename.py` (lines X-Y)
+- Use > blockquotes for important insights or warnings
+### How It Works
+1. **Step 1**: Description of first step
+2. **Step 2**: Description of second step  
+3. **Step 3**: Description of third step
+> **Key Insight**: Important observations about the implementation
+## Additional Notes
+[Any limitations, missing information, or recommendations]
+REQUIREMENTS:
+- NO emojis - use clean text only
+- Be comprehensive and detailed
+- Reference specific files and line numbers
+- Explain both WHAT the code does and HOW it works
+- Use proper markdown hierarchy (##, ###, -, >, etc.)
+- Focus on explanation rather than just code listing
+- Professional documentation style
+Your detailed markdown analysis:"""
             
             response = self.model.generate_content(prompt)
             
@@ -90,9 +111,7 @@ Similarity: {chunk['similarity']:.2f}
     def generate_quota_response(self, query: str, code_chunks: List[Dict], repository_name: str) -> Dict:
         context = self.prepare_context(code_chunks)
         response = f"""🚫 Gemini quota exceeded, but I found {len(code_chunks)} relevant code sections:
-
 {context}
-
 The search found relevant code with similarity scores from {min(c['similarity'] for c in code_chunks):.2f} to {max(c['similarity'] for c in code_chunks):.2f}. Please try again in a few minutes when quota resets."""
         
         return self.create_response_dict(response, code_chunks, repository_name, 'quota_exceeded')
@@ -100,9 +119,7 @@ The search found relevant code with similarity scores from {min(c['similarity'] 
     def generate_fallback_response(self, query: str, code_chunks: List[Dict], repository_name: str) -> Dict:
         context = self.prepare_context(code_chunks)
         response = f"""Found {len(code_chunks)} relevant code sections for: "{query}"
-
 {context}
-
 Note: AI analysis requires API configuration. The search results above show the most relevant code."""
         
         return self.create_response_dict(response, code_chunks, repository_name, 'fallback')
