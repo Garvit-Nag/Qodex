@@ -40,7 +40,7 @@ RESPONSE FORMAT:
 Use clean, professional markdown formatting similar to GitHub README files:
 ## Main Answer
 [Direct answer to the user's question]
-## Implementation Overview  
+## Implementation Overview
 [High-level explanation of how the feature/system works]
 ### Key Components
 - **Component Name**: Brief description (`filename.py`, lines X-Y)
@@ -54,7 +54,7 @@ When referencing code:
 - Use > blockquotes for important insights or warnings
 ### How It Works
 1. **Step 1**: Description of first step
-2. **Step 2**: Description of second step  
+2. **Step 2**: Description of second step
 3. **Step 3**: Description of third step
 > **Key Insight**: Important observations about the implementation
 ## Additional Notes
@@ -71,6 +71,21 @@ Your detailed markdown analysis:"""
             
             response = self.model.generate_content(prompt)
             
+            # --- START: BEST FIX ---
+            # Clean the response text to remove markdown code block wrappers
+            response_text = response.text
+            
+            if response_text.startswith("```markdown"):
+                response_text = response_text[len("```markdown"):]
+            elif response_text.startswith("```"):
+                response_text = response_text[len("```"):]
+                
+            if response_text.endswith("```"):
+                response_text = response_text[:-len("```")]
+                
+            response_text = response_text.strip() # Remove any leading/trailing whitespace
+            # --- END: BEST FIX ---
+
             sources = []
             for chunk in code_chunks:
                 sources.append({
@@ -82,7 +97,7 @@ Your detailed markdown analysis:"""
                 })
             
             return {
-                'response': response.text,
+                'response': response_text,  # Use the cleaned text
                 'sources': sources,
                 'context_chunks_used': len(code_chunks),
                 'repository_name': repository_name,
