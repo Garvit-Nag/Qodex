@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Repository, UserProfile } from '@/types';
-import { Plus, Trash2 } from 'lucide-react';
+import { SquarePen, Trash2 } from 'lucide-react';
 
 interface ChatSidebarProps {
   repositories: Repository[];
@@ -54,7 +54,7 @@ export default function ChatSidebar({
           onClick={onNewChat}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 font-medium shadow-lg"
         >
-          <Plus className="w-4 h-4" />
+          <SquarePen className="w-5 h-5" />
           New Chat
         </button>
       </div>

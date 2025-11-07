@@ -2,7 +2,7 @@
 'use client';
 
 import { UserProfile, Repository } from '@/types';
-import { Activity } from 'lucide-react';
+import { Activity, ChartLine } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import ActivityTimeline from '@/components/dashboard/ActivityTimeline';
 import CircularProgress from '@/components/dashboard/CircularProgress';
@@ -101,7 +101,10 @@ export default function DashboardAnalytics({ userProfile, repositories, loading 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Monthly Usage Progress - 1 column */}
       <div className="lg:col-span-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Monthly Usage</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <ChartLine className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Monthly Usage</h3>
+        </div>
         <div className="flex items-center justify-center h-64">
           <CircularProgress
             percentage={usagePercentage}

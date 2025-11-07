@@ -12,9 +12,11 @@ import LiquidEther from '@/components/LiquidEther';
 import DashboardAnalytics from '@/components/dashboard/DashboardAnalytics';
 import UserProfileSection from '@/components/dashboard/UserProfileSection';
 import CustomLoader from '@/components/ui/LoaderComponent';
+import ActionsAndActivity from '@/components/dashboard/ActionsAndActivity';
+import PlanStatusCard from '@/components/dashboard/PlanStatusCard';
 
 export default function Dashboard() {
-  const { user, userProfile, refreshUserProfile } = useAuth();
+  const { user, userProfile, refreshUserProfile, signOut } = useAuth();
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,6 @@ export default function Dashboard() {
       fetchRepositories();
     }
   }, [user]);
-
   const fetchRepositories = async () => {
     try {
       const response = await databases.listDocuments(
@@ -67,16 +68,36 @@ export default function Dashboard() {
       {/* Content */}
       <div className="relative z-10 pt-24 pb-16">
         <div className="container mx-auto px-6">
-          {/* Single User Profile Container with Stats */}
+          {/* User Profile Container with Stats */}
+          <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <UserProfileSection
+                user={user}
+                userProfile={userProfile}
+                repositories={repositories}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <PlanStatusCard userProfile={userProfile} />
+            </div>
+          </div>
+
+          {/* Actions and Activity Section */}
           <div className="mb-8">
-            <UserProfileSection
-              user={user}
-              userProfile={userProfile}
+            <ActionsAndActivity
               repositories={repositories}
+              onSignOut={async () => {
+                try {
+                  await signOut();
+                  window.location.href = '/';
+                } catch (error) {
+                  console.error('Sign out error:', error);
+                }
+              }}
             />
           </div>
 
-          {/* Analytics Dashboard - Just Monthly Usage + Timeline */}
+          {/* Analytics Dashboard */}
           <DashboardAnalytics
             userProfile={userProfile}
             repositories={repositories}
