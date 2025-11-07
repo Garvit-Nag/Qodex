@@ -57,7 +57,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto">
           {/* Get Started - Same color as navbar button */}
           <Link
-            href="/dashboard"
+            href="/explore"
             className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 shadow-lg border border-white/20 dark:border-gray-400/20 inline-block"
           >
             Get Started

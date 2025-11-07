@@ -43,7 +43,7 @@ export default function VerifyEmail() {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (status === 'success' && countdown === 0) {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [status, countdown, router]);
 

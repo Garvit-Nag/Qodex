@@ -30,7 +30,7 @@ export default function SignIn() {
 
     try {
       await signInWithEmail(email, password);
-      router.push('/');
+      router.push('/dashboard');
     } catch (err: any) {
       if (err.code === 401 || err.message?.includes('Invalid credentials')) {
         if (err.message?.includes('OAuth')) {
