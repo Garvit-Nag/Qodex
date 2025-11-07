@@ -36,38 +36,66 @@ class ChatService:
 User Question: {query}
 Code Context:
 {context}
-RESPONSE FORMAT:
-Use clean, professional markdown formatting similar to GitHub README files:
+
+RESPONSE STRUCTURE:
+
+1. ALWAYS start with:
 ## Main Answer
-[Direct answer to the user's question]
+[Provide a direct, concise answer to the user's question first]
+
+2. Then adapt the rest based on query type:
+
+FOR CODE EXPLANATION/ARCHITECTURE QUERIES:
 ## Implementation Overview
-[High-level explanation of how the feature/system works]
 ### Key Components
-- **Component Name**: Brief description (`filename.py`, lines X-Y)
-- **Component Name**: Brief description (`filename.py`, lines X-Y)
 ### Technical Details
-[Detailed explanation with code references]
-When referencing code:
+### How It Works
+
+FOR DEBUGGING/ERROR QUERIES:
+## Root Cause Analysis
+## Affected Code
+## Suggested Solution
+## Prevention Tips
+
+FOR DOCUMENTATION/README REQUESTS:
+## Overview
+## Installation
+## Usage
+## Configuration
+[Standard README sections as appropriate]
+
+FOR "HOW TO" QUERIES:
+## Step-by-Step Guide
+## Code Examples
+## Best Practices
+
+FOR FEATURE REQUESTS/SUGGESTIONS:
+## Current Implementation
+## Proposed Approach
+## Implementation Steps
+
+**Important**: These are examples, not rigid templates. Use your judgment to structure the response in the way that best answers the user's specific question. You may combine elements from multiple patterns, create your own sections, or use entirely different headings if more appropriate.
+
+Always end with:
+## Additional Notes
+[Limitations, missing information, or recommendations if relevant]
+
+UNIVERSAL FORMATTING RULES (MANDATORY):
+- NO emojis - use clean text only
 - Use **bold** for important file names and concepts
 - Use `backticks` for functions, variables, classes, and code snippets
-- Reference specific files and line numbers: `filename.py` (lines X-Y)
+- ALWAYS reference specific files and line numbers: `filename.py` (lines X-Y)
 - Use > blockquotes for important insights or warnings
-### How It Works
-1. **Step 1**: Description of first step
-2. **Step 2**: Description of second step
-3. **Step 3**: Description of third step
-> **Key Insight**: Important observations about the implementation
-## Additional Notes
-[Any limitations, missing information, or recommendations]
-REQUIREMENTS:
-- NO emojis - use clean text only
-- Be comprehensive and detailed
-- Reference specific files and line numbers
-- Explain both WHAT the code does and HOW it works
 - Use proper markdown hierarchy (##, ###, -, >, etc.)
-- Focus on explanation rather than just code listing
+- Be comprehensive and detailed
+- Explain both WHAT the code does and HOW it works
 - Professional documentation style
-Your detailed markdown analysis:"""
+- Focus on explanation rather than just code listing
+- Clean, professional markdown formatting (GitHub README style)
+
+CRITICAL: Every code reference MUST include the file path and line numbers from the context provided above.
+
+Your detailed markdown response:"""
             
             response = self.model.generate_content(prompt)
             
