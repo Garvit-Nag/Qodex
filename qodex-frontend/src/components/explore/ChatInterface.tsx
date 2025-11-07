@@ -493,8 +493,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me anything about the code..."
-            className="w-full p-3 pr-14 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 bg-white/70 dark:bg-white/10 text-gray-900 dark:text-white resize-none transition-all backdrop-blur-sm text-sm"
-            rows={1}
+  className="w-full p-3 pr-14 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 bg-white/70 dark:bg-white/10 text-gray-900 dark:text-white resize-none transition-all backdrop-blur-sm text-sm scrollbar-hide"            rows={1}
             disabled={loading || !canSend}
           />
           <button
