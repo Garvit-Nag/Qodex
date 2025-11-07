@@ -74,7 +74,11 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   }, [repository, user]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const lastMessage = messages[messages.length - 1];
+    // Only auto-scroll when USER sends a message, not when assistant responds
+    if (lastMessage?.role === 'user') {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -383,8 +387,8 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[calc(100%-2rem)] ${message.role === 'user'
-                ? 'bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
-                : 'border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
+              ? 'bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
+              : 'border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
               } rounded-2xl p-6 shadow-lg transition-all duration-300 break-words`}>
 
               <div className="text-sm leading-relaxed">
@@ -493,7 +497,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me anything about the code..."
-  className="w-full p-3 pr-14 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 bg-white/70 dark:bg-white/10 text-gray-900 dark:text-white resize-none transition-all backdrop-blur-sm text-sm scrollbar-hide"            rows={1}
+            className="w-full p-3 pr-14 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 bg-white/70 dark:bg-white/10 text-gray-900 dark:text-white resize-none transition-all backdrop-blur-sm text-sm scrollbar-hide" rows={1}
             disabled={loading || !canSend}
           />
           <button
