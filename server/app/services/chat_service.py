@@ -36,39 +36,50 @@ class ChatService:
 User Question: {query}
 Code Context:
 {context}
+
 RESPONSE STRUCTURE:
+
 1. ALWAYS start with:
 ## Main Answer
 [Provide a direct, concise answer to the user's question first]
+
 2. Then adapt the rest based on query type:
+
 FOR CODE EXPLANATION/ARCHITECTURE QUERIES:
 ## Implementation Overview
 ### Key Components
 ### Technical Details
 ### How It Works
+
 FOR DEBUGGING/ERROR QUERIES:
 ## Root Cause Analysis
 ## Affected Code
 ## Suggested Solution
 ## Prevention Tips
+
 FOR DOCUMENTATION/README REQUESTS:
 ## Overview
 ## Installation
 ## Usage
 ## Configuration
 [Standard README sections as appropriate]
+
 FOR "HOW TO" QUERIES:
 ## Step-by-Step Guide
 ## Code Examples
 ## Best Practices
+
 FOR FEATURE REQUESTS/SUGGESTIONS:
 ## Current Implementation
 ## Proposed Approach
 ## Implementation Steps
+
 **Important**: These are examples, not rigid templates. Use your judgment to structure the response in the way that best answers the user's specific question. You may combine elements from multiple patterns, create your own sections, or use entirely different headings if more appropriate.
+
 Always end with:
 ## Additional Notes
 [Limitations, missing information, or recommendations if relevant]
+
 UNIVERSAL FORMATTING RULES (MANDATORY):
 - NO emojis - use clean text only
 - Use **bold** for important file names and concepts
@@ -81,7 +92,9 @@ UNIVERSAL FORMATTING RULES (MANDATORY):
 - Professional documentation style
 - Focus on explanation rather than just code listing
 - Clean, professional markdown formatting (GitHub README style)
+
 CRITICAL: Every code reference MUST include the file path and line numbers from the context provided above.
+
 Your detailed markdown response:"""
             
             response = self.model.generate_content(prompt)
