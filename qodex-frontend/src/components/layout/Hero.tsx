@@ -1,9 +1,20 @@
 "use client";
-
 import LiquidEther from "@/components/LiquidEther"
 import Link from "next/link";
+import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleGetStartedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      router.push('/auth/signin');
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Animated Background */}
@@ -26,7 +37,6 @@ export default function Hero() {
           autoRampDuration={0.6}
         />
       </div>
-
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pointer-events-none">
         {/* Modern Announcement Badge - Purple theme for both modes */}
@@ -38,31 +48,27 @@ export default function Hero() {
             <span>AI-Powered Code Intelligence</span>
           </div>
         </div>
-
         {/* Main Headings */}
         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
           Unlock Code Insights.
         </h1>
-
         <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
           Query Knowledge Within.
         </h2>
-
         {/* Description */}
         <p className="text-lg md:text-xl text-gray-800 dark:text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed">
           Transform your codebase into a knowledgeable resource, ready for instant querying. Navigate complex logic with semantic clarity.
         </p>
-
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto">
           {/* Get Started - Same color as navbar button */}
           <Link
             href="/explore"
+            onClick={handleGetStartedClick}
             className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 shadow-lg border border-white/20 dark:border-gray-400/20 inline-block"
           >
             Get Started
           </Link>
-
           {/* View Demo - Purple theme in light mode, original glassmorphism in dark mode */}
           <Link
             href="/about"
