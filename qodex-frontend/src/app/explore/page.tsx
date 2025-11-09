@@ -14,7 +14,7 @@ import ChatMainPanel from '@/components/explore/ChatMainPanel';
 import RepoUploadModal from '@/components/explore/RepoUploadModal';
 import DeleteConfirmModal from '@/components/explore/DeleteConfirmModal';
 import CustomDropdown from '@/components/explore/CustomDropdown';
-import { Plus, Trash2 } from 'lucide-react';
+import { SquarePen, Trash2 } from 'lucide-react';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -287,35 +287,40 @@ export default function ExplorePage() {
 
             {/* Mobile Layout - Hidden on desktop */}
             <div className="md:hidden h-full flex flex-col gap-4">
-              {/* Mobile Header - NEVER BLURS */}
-              <div className="relative z-[9998] flex items-center gap-2 p-4 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl">
-                <button
-                  onClick={handleNewChat}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 font-medium shadow-lg"
-                >
-                  <Plus className="w-4 h-4" />
-                  New Chat
-                </button>
+              {/* Mobile Header - Compact design */}
+              <div className="relative z-[9998] flex items-center justify-between gap-2 px-3 py-2.5 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-xl">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <button
+                    onClick={handleNewChat}
+                    className="flex items-center justify-center p-2.5 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 shadow-lg flex-shrink-0"
+                    aria-label="New Chat"
+                  >
+                    <SquarePen className="w-5 h-5" />
+                  </button>
 
-                <CustomDropdown
-                  repositories={repositories}
-                  selectedRepo={selectedRepo}
-                  onRepoSelect={handleRepoSelect}
-                  getRepoStatus={getRepoStatus}
-                  onOpenChange={setIsDropdownOpen}
-                />
+                  <div className="flex-1 min-w-0">
+                    <CustomDropdown
+                      repositories={repositories}
+                      selectedRepo={selectedRepo}
+                      onRepoSelect={handleRepoSelect}
+                      getRepoStatus={getRepoStatus}
+                      onOpenChange={setIsDropdownOpen}
+                    />
+                  </div>
+                </div>
 
                 {selectedRepo && (
                   <button
                     onClick={() => handleRepoDelete(selectedRepo.$id)}
-                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                    className="p-2.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl transition-colors flex-shrink-0"
+                    aria-label="Delete Repository"
                   >
-                    <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                    <Trash2 className="w-5 h-5 text-gray-400 hover:text-red-500" />
                   </button>
                 )}
               </div>
 
-              {/* Mobile Chat Panel - THIS GETS BLURRED */}
+              {/* Mobile Chat Panel */}
               <div className={`flex-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 ${isDropdownOpen ? 'blur-sm pointer-events-none' : ''}`}>
                 <ChatMainPanel
                   selectedRepo={selectedRepo}
