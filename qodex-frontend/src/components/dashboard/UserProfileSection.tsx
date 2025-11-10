@@ -62,13 +62,15 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
         </div>
 
         {/* User Info */}
-        <div>
+        <div className="flex-1 min-w-0 pr-4 md:pr-0">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {user.name}
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {user.email}
-          </p>
+          <div className="md:overflow-visible overflow-hidden">
+            <p className="text-gray-600 dark:text-gray-300 md:whitespace-normal whitespace-nowrap md:animate-none animate-marquee hover:animation-pause">
+              {user.email}
+            </p>
+          </div>
         </div>
       </div>
 

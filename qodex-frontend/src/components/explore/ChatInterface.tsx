@@ -23,15 +23,16 @@ interface ChatInterfaceProps {
 export default function ChatInterface({ repository }: ChatInterfaceProps) {
   const { user, userProfile } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messageCount, setMessageCount] = useState(0);
   const [canSend, setCanSend] = useState(true);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [isNewRepository, setIsNewRepository] = useState(false);
   const [showQuote, setShowQuote] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Developer quotes for motivation
   const quotes = [
@@ -82,27 +83,77 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   }, [messages]);
 
   useEffect(() => {
-    if (userProfile && conversationId !== null) {
+    if (userProfile) {
+      console.log('🔄 Checking quota - messageCount:', messageCount, 'tier:', userProfile.subscription_tier);
       checkQuota();
     }
-  }, [userProfile, conversationId, messageCount]);
+  }, [userProfile, conversationId, messageCount]); // Make sure messageCount is in dependencies
 
   const checkQuota = async () => {
-    if (!userProfile || userProfile.subscription_tier === 'premium') {
+    if (!userProfile) {
       setCanSend(true);
       return;
     }
 
+    // Premium users have unlimited messages
+    if (userProfile.subscription_tier === 'premium') {
+      setCanSend(true);
+      return;
+    }
+
+    // Free users: check if they've reached 25 messages
+    if (messageCount >= 25) {
+      console.log('🚫 Quota exceeded:', messageCount, 'messages sent');
+      setCanSend(false);
+      return;
+    }
+
+    // If conversationId exists, also check via API
     if (conversationId !== null) {
       try {
         const canSendMsg = await canSendMessage(conversationId, user!.$id, userProfile);
+        console.log('📊 API quota check:', canSendMsg);
         setCanSend(canSendMsg);
       } catch (error) {
         console.error('Error checking quota:', error);
         setCanSend(false);
       }
+    } else {
+      setCanSend(true);
     }
+
   };
+
+  useEffect(() => {
+    // Wait for component to mount and messages to render
+    const timer = setTimeout(() => {
+      const messagesContainer = document.querySelector('.messages-container');
+      if (!messagesContainer) {
+        console.log('❌ Messages container not found');
+        return;
+      }
+
+      console.log('✅ Messages container found, adding scroll listener');
+
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
+        console.log('Scroll:', { scrollTop, scrollHeight, clientHeight, isNearBottom, showButton: !isNearBottom });
+        setShowScrollButton(!isNearBottom && messages.length > 3); // Only show if there are messages
+      };
+
+      // Initial check
+      handleScroll();
+
+      messagesContainer.addEventListener('scroll', handleScroll);
+      return () => {
+        console.log('🧹 Removing scroll listener');
+        messagesContainer.removeEventListener('scroll', handleScroll);
+      };
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [messages]); // Re-run when messages change
 
   const loadChatHistory = async () => {
     setLoadingMessages(true);
@@ -155,7 +206,8 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   };
 
   const handleSendMessage = async () => {
-    if (!input.trim() || loading || !canSend) return;
+    const inputValue = inputRef.current?.value || '';
+    if (!inputValue.trim() || loading || !canSend) return;
 
     setShowQuote(false);
 
@@ -174,12 +226,12 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: inputValue.trim(),
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if (inputRef.current) inputRef.current.value = '';
     setLoading(true);
 
     try {
@@ -191,7 +243,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
           'X-User-ID': user!.$id,
         },
         body: JSON.stringify({
-          query: input.trim(),
+          query: inputValue.trim(),
           repository_id: repository.repository_id,
         }),
       });
@@ -258,6 +310,10 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       minute: '2-digit',
       hour12: true
     });
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const getQuotaInfo = () => {
@@ -333,7 +389,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     },
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-white/90 dark:bg-white/5 pl-4 py-2 my-4 italic rounded-r-lg backdrop-blur-md">
-
         <div className="text-gray-800 dark:text-gray-200">
           {children}
         </div>
@@ -359,7 +414,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden relative">
       {/* Chat Header */}
       <ChatHeader
         repository={repository}
@@ -368,16 +423,15 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       />
 
       {/* Messages with better spacing */}
-      <div className="flex-1 overflow-auto px-6 py-6 space-y-6 custom-scrollbar">
+      <div className="messages-container flex-1 overflow-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 custom-scrollbar">
         {/* Motivational Quote */}
         {showQuote && messages.length === 0 && (
-
-          <div className="flex justify-center py-12">
-            <div className="text-center max-w-md">
-              <p className="text-lg italic text-gray-600 dark:text-gray-400 leading-relaxed">
+          <div className="flex justify-center py-8 md:py-12">
+            <div className="text-center max-w-md px-4">
+              <p className="text-base md:text-lg italic text-gray-600 dark:text-gray-400 leading-relaxed">
                 &quot;{currentQuote}&quot;
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-500 mt-4">
                 Start exploring your codebase by asking a question below
               </p>
             </div>
@@ -386,10 +440,10 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[calc(100%-2rem)] ${message.role === 'user'
+            <div className={`max-w-[90%] md:max-w-[calc(100%-2rem)] ${message.role === 'user'
               ? 'bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
               : 'border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white'
-              } rounded-2xl p-6 shadow-lg transition-all duration-300 break-words`}>
+              } rounded-2xl p-4 md:p-6 shadow-lg transition-all duration-300 break-words`}>
 
               <div className="text-sm leading-relaxed">
                 {message.role === 'user' ? (
@@ -439,28 +493,55 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         {/* Loading Animation */}
         {loading && (
           <div className="flex justify-start">
-            <div className="border border-gray-300 dark:border-white/20 rounded-2xl p-4 shadow-lg flex items-center gap-4 mr-4">
-              <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                <img
-                  src="/agent.png"
-                  alt="QODEX AI"
-                  className="w-5 h-5 object-contain"
-                />
+            <div className="flex items-center gap-3">
+              <img
+                src="/agent-light.png"
+                alt="QODEX AI"
+                className="w-8 h-8 object-contain dark:hidden"
+              />
+              <img
+                src="/agent.png"
+                alt="QODEX AI"
+                className="w-8 h-8 object-contain hidden dark:block"
+              />
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-100"></div>
+                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-200"></div>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-200"></div>
-                </div>
-                <span className="text-sm text-gray-600 dark:text-gray-400">QODEX AI is analyzing your code...</span>
-              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">QODEX AI is analyzing your code...</span>
             </div>
           </div>
         )}
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Scroll to Bottom Button */}
+      {showScrollButton && (
+        <div className="fixed bottom-32 md:bottom-28 right-4 md:right-6 z-50">
+          <button
+            onClick={scrollToBottom}
+            className="bg-white/90 dark:bg-white/10 backdrop-blur-md border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/20 text-gray-700 dark:text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 animate-bounce-slow"
+            aria-label="Scroll to bottom"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
+
 
       {/* Enhanced Quota Warning */}
       {!canSend && quotaInfo && (
@@ -488,31 +569,46 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         </div>
       )}
 
-      {/* Fixed Input Area with Inline Send Button */}
-      <div className="border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5 px-4 py-4">
-
-        <div className="relative flex items-center">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
+      {/* OPTIMIZED Input Area with Horizontal Scroll */}
+      <div className="border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5 px-3 md:px-4 py-3 md:py-4">
+        <div className="flex items-center gap-2 md:gap-3 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-xl md:rounded-2xl px-3 md:px-4 py-2.5 md:py-3 shadow-lg">
+          <input
+            ref={inputRef}
+            type="text"
+            defaultValue=""
+            onKeyDown={handleKeyPress}
             placeholder="Ask me anything about the code..."
-            className="w-full p-3 pr-14 border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 bg-white/70 dark:bg-white/10 text-gray-900 dark:text-white resize-none transition-all backdrop-blur-sm text-sm scrollbar-hide" rows={1}
             disabled={loading || !canSend}
+            className="flex-1 bg-transparent text-sm md:text-base text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-white/50 focus:outline-none disabled:opacity-50 overflow-x-auto whitespace-nowrap scrollbar-hide"
+            style={{
+              textOverflow: 'clip',
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
           />
           <button
             onClick={handleSendMessage}
-            disabled={loading || !input.trim() || !canSend}
-            className="absolute right-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black p-2.5 rounded-r-lg rounded-l-lg transition-all transform hover:scale-105 disabled:scale-100 disabled:opacity-50 shadow-lg"
+            disabled={loading || !canSend}
+            className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black p-2 md:p-2.5 rounded-lg md:rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 disabled:scale-100 shadow-lg flex-shrink-0"
+            aria-label="Send message"
           >
             {loading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-white dark:border-black border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 md:w-5 md:h-5" />
             )}
           </button>
         </div>
       </div>
+
+      {/* Hide scrollbar for input */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }

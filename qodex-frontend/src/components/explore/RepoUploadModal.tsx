@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { databases, DATABASE_ID, REPOSITORIES_COLLECTION_ID, ID } from '@/lib/appwrite';
 import { UserProfile } from '@/types';
-import { Github } from 'lucide-react';
+import { AlertTriangle, Github } from 'lucide-react';
 
 interface RepoUploadModalProps {
   onClose: () => void;
@@ -48,7 +48,7 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
       // Validate GitHub URL
       const githubUrlPattern = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)(\.git)?$/;
       const match = repoUrl.match(githubUrlPattern);
-      
+
       if (!match) {
         throw new Error('Please provide a valid GitHub repository URL (e.g., https://github.com/user/repo)');
       }
@@ -132,6 +132,21 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
             Upload a GitHub repository to start chatting
           </p>
         </div>
+
+        {/* Warning for limit reached */}
+        {isAtLimit && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4 flex items-center gap-3">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-yellow-800 dark:text-yellow-300 text-sm font-medium">Monthly Upload Limit Reached</p>
+              <p className="text-yellow-700 dark:text-yellow-400 text-xs mt-1">
+                You&apos;ve used all {userProfile?.max_repos_allowed} repository uploads for this month. Limit resets next month.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Error */}
         {error && (
