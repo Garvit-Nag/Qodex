@@ -26,11 +26,11 @@ export default function SignOutModal({ onConfirm, onCancel }: SignOutModalProps)
 
                 {/* Security Tip Card */}
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/50 rounded-xl p-4 mb-6">
-                    <div className="flex gap-3">
-                        <div className="w-12 h-full bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-start justify-center pt-1 flex-shrink-0">
-                            <Shield className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                    <div className="flex gap-3 items-center">
+                        <div className="flex-shrink-0">
+                            <Shield className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
                         </div>
-                        <div className="flex-1 flex flex-col justify-center">
+                        <div className="flex-1">
                             <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
                                 Security Reminder
                             </div>
