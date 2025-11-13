@@ -35,7 +35,6 @@ export default function VerifyEmail() {
     }
   }, [searchParams]);
 
-  // Countdown timer for success redirect
   useEffect(() => {
     if (status === 'success' && countdown > 0) {
       const timer = setTimeout(() => {
@@ -70,7 +69,7 @@ export default function VerifyEmail() {
     setStatus('resending');
     try {
       await sendVerificationEmail();
-      setStatus('error'); // Keep on error page so user can try again if needed
+      setStatus('error'); 
       setToast({
         message: 'Verification email sent! Please check your inbox and spam folder.',
         type: 'success'
@@ -86,7 +85,6 @@ export default function VerifyEmail() {
 
   return (
     <div className="h-screen overflow-hidden bg-white dark:bg-black relative">
-      {/* Full Background DotGrid */}
       <div className="absolute inset-0 z-0">
         <DotGrid
           dotSize={5}
@@ -99,17 +97,13 @@ export default function VerifyEmail() {
         />
       </div>
 
-      {/* Translucent Navbar */}
       <div className="relative z-50">
         <Navbar />
       </div>
 
-      {/* Main Content - SAME LAYOUT AS SIGN-IN */}
       <div className="absolute inset-0 pt-16 z-10 flex items-center justify-center px-8 gap-16">
-        {/* Verification Box - SAME SIZE AS SIGN-IN */}
         <div className="w-96 flex-shrink-0">
           <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 space-y-5">
-            {/* Logo */}
             <div className="text-center">
               <Link href="/" className="inline-block">
                 <Image
@@ -131,9 +125,7 @@ export default function VerifyEmail() {
               </Link>
             </div>
 
-            {/* Status Icon and Title */}
             <div className="text-center space-y-4">
-              {/* Loading State */}
               {status === 'loading' && (
                 <>
                   <div className="flex justify-center">
@@ -153,7 +145,6 @@ export default function VerifyEmail() {
                 </>
               )}
 
-              {/* Success State */}
               {status === 'success' && (
                 <>
                   <div className="flex justify-center">
@@ -168,14 +159,12 @@ export default function VerifyEmail() {
                     {message}
                   </p>
                   
-                  {/* Countdown Badge */}
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/10 rounded-full text-xs text-gray-700 dark:text-gray-300">
                     <span>Redirecting in {countdown}s</span>
                   </div>
                 </>
               )}
 
-              {/* Error State */}
               {status === 'error' && (
                 <>
                   <div className="flex justify-center">
@@ -192,7 +181,6 @@ export default function VerifyEmail() {
                 </>
               )}
 
-              {/* Resending State */}
               {status === 'resending' && (
                 <>
                   <div className="flex justify-center">
@@ -210,7 +198,6 @@ export default function VerifyEmail() {
               )}
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
               {status === 'success' && (
                 <Link
@@ -254,13 +241,11 @@ export default function VerifyEmail() {
           </div>
         </div>
 
-        {/* Browser Window - SAME AS SIGN-IN */}
         <div className="hidden xl:flex flex-shrink-0 items-center">
           <BrowserWindow className="w-[800px]" />
         </div>
       </div>
 
-      {/* Toast Notification - Only for resend feedback */}
       {toast && (
         <Toast
           message={toast.message}

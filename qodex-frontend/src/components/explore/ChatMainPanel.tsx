@@ -11,7 +11,6 @@ interface ChatMainPanelProps {
 }
 
 export default function ChatMainPanel({ selectedRepo, userProfile }: ChatMainPanelProps) {
-  // Developer quotes for motivation
   const quotes = [
     "Code is poetry written in logic.",
     "Every expert was once a beginner.",
@@ -44,7 +43,6 @@ export default function ChatMainPanel({ selectedRepo, userProfile }: ChatMainPan
     );
   }
 
-  // Show loading state if repository is not ready
   if (selectedRepo.status?.toLowerCase() !== 'ready') {
     const getStatusInfo = () => {
       switch (selectedRepo.status?.toLowerCase()) {
@@ -99,6 +97,5 @@ export default function ChatMainPanel({ selectedRepo, userProfile }: ChatMainPan
     );
   }
 
-  // Show chat interface for ready repositories
   return <ChatInterface repository={selectedRepo} />;
 }

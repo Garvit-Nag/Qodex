@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Models } from 'appwrite';
 
-// Base Appwrite Document interface
 interface BaseDocument extends Models.Document {
   [key: string]: any;
 }
 
-// User related types - ADD AVATAR HERE
 export interface User {
   $id: string;
   name: string;
   email: string;
-  avatar?: string; // 👈 Add this line
+  avatar?: string; 
   emailVerification?: boolean;
 }
 
@@ -30,7 +28,6 @@ export interface UserProfile extends BaseDocument {
   $updatedAt: string;
 }
 
-// ... rest of your interfaces stay the same
 export interface SubscriptionPlan {
   id: string;
   name: string;

@@ -16,24 +16,19 @@ export default function AuthCallback() {
       try {
         setStatus('Completing authentication...');
 
-        // Get the current user after OAuth
         const user = await account.get();
         console.log('OAuth user:', user);
 
-        // Try to extract and store Google profile picture
         try {
-          // Check if we can get additional user info from Google
           const session = await account.getSession('current');
           console.log('Session info:', session);
 
-          // Try to get Google profile picture from OAuth provider data
           if (session.provider === 'google' && session.providerAccessToken) {
             setStatus('Fetching profile picture...');
             await fetchAndStoreGoogleAvatar(session.providerAccessToken, user.$id);
           }
         } catch (avatarError) {
           console.log('Could not fetch Google avatar:', avatarError);
-          // Continue anyway - not critical
         }
 
         setStatus('Redirecting...');
@@ -48,14 +43,12 @@ export default function AuthCallback() {
     handleCallback();
   }, [router]);
 
-  // Function to fetch Google profile picture
   const fetchAndStoreGoogleAvatar = async (accessToken: string, userId: string) => {
     try {
       const response = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`);
       const userData = await response.json();
 
       if (userData.picture) {
-        // Store the avatar URL in user preferences
         await account.updatePrefs({ avatar: userData.picture });
         console.log('✅ Google avatar stored:', userData.picture);
       }

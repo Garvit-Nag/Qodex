@@ -1,10 +1,8 @@
 import Stripe from 'stripe';
 
-// Only initialize on server-side
 let stripe: Stripe | null = null;
 
 if (typeof window === 'undefined') {
-  // Server-side only
   stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-10-29.clover',
   });
@@ -12,7 +10,6 @@ if (typeof window === 'undefined') {
 
 export { stripe };
 
-// Subscription plans configuration (can be used anywhere)
 export const SUBSCRIPTION_PLANS = {
   free: {
     id: 'free',
@@ -49,12 +46,10 @@ export const SUBSCRIPTION_PLANS = {
   }
 } as const;
 
-// Helper to get plan details
 export const getPlanDetails = (planId: 'free' | 'premium') => {
   return SUBSCRIPTION_PLANS[planId];
 };
 
-// Stripe configuration for frontend
 export const stripeConfig = {
   publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
   currency: 'inr',

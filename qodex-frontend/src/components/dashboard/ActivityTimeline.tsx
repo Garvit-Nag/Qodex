@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { TrendingUp, Activity } from "lucide-react";
@@ -38,15 +39,12 @@ export default function ActivityTimeline({ data }: ActivityTimelineProps) {
     },
   } satisfies ChartConfig;
 
-  // Calculate chart width based on number of data points
-  // Fixed bar width: 80px per bar + gap
   const barWidth = 80;
   const gap = 40;
   const minChartWidth = Math.max(400, data.length * (barWidth + gap));
 
   return (
     <div className="w-full">
-      {/* Scrollable Chart Container */}
       <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-purple-400 scrollbar-track-gray-200 dark:scrollbar-track-gray-700">
         <div style={{ width: `${minChartWidth}px`, minWidth: '100%' }}>
           <ChartContainer config={chartConfig} className="h-64 w-full">
@@ -54,7 +52,7 @@ export default function ActivityTimeline({ data }: ActivityTimelineProps) {
               <BarChart 
                 data={data}
                 margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
-                barCategoryGap="20%" // Fixed gap between bars
+                barCategoryGap="20%" 
               >
                 <CartesianGrid 
                   vertical={false} 
@@ -99,10 +97,9 @@ export default function ActivityTimeline({ data }: ActivityTimelineProps) {
                   dataKey="count" 
                   fill="url(#barGradient)"
                   radius={[4, 4, 0, 0]}
-                  maxBarSize={60} // Fixed maximum bar width
+                  maxBarSize={60} 
                 />
                 
-                {/* Custom gradient */}
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#8b5cf6" />
@@ -115,7 +112,6 @@ export default function ActivityTimeline({ data }: ActivityTimelineProps) {
         </div>
       </div>
 
-      {/* Footer Stats */}
       <div className="flex items-center justify-between mt-4 text-sm">
         <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-white">
           <TrendingUp className="h-4 w-4 text-green-500" />
@@ -126,7 +122,6 @@ export default function ActivityTimeline({ data }: ActivityTimelineProps) {
         </div>
       </div>
 
-      {/* Custom scrollbar styles */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           height: 6px;

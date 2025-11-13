@@ -27,9 +27,7 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
 
   return (
     <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl p-8">
-      {/* Profile Header */}
       <div className="flex items-center gap-6 mb-8">
-        {/* Avatar */}
         <div className="relative">
           {user.avatar ? (
             <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-2 border-white/20 relative">
@@ -49,7 +47,6 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
             </div>
           ) : null}
 
-          {/* Fallback initials - shown when no avatar or error */}
           <div className={`w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg ${user.avatar ? 'hidden' : ''}`}>
             {getInitials(user.name)}
           </div>
@@ -61,7 +58,6 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
           )}
         </div>
 
-        {/* User Info */}
         <div className="flex-1 min-w-0 pr-4 md:pr-0">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {user.name}
@@ -74,9 +70,7 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
         </div>
       </div>
 
-      {/* Stats Grid - 4 Boxes in a Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Total Repositories */}
         <div className="bg-white/50 dark:bg-white/10 backdrop-blur-md border border-gray-200 dark:border-white/20 rounded-xl p-4 hover:scale-105 transition-transform duration-300">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
@@ -94,7 +88,6 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
           </div>
         </div>
 
-        {/* Average Repos/Day */}
         <div className="bg-white/50 dark:bg-white/10 backdrop-blur-md border border-gray-200 dark:border-white/20 rounded-xl p-4 hover:scale-105 transition-transform duration-300">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
@@ -112,7 +105,6 @@ export default function UserProfileSection({ user, userProfile, repositories }: 
           </div>
         </div>
 
-        {/* Account Age */}
         <div className="bg-white/50 dark:bg-white/10 backdrop-blur-md border border-gray-200 dark:border-white/20 rounded-xl p-4 hover:scale-105 transition-transform duration-300">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">

@@ -52,7 +52,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -65,10 +64,8 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 pt-24 pb-16">
         <div className="container mx-auto px-6">
-          {/* User Profile Container with Stats */}
           <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <UserProfileSection
@@ -82,7 +79,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Actions and Activity Section */}
           <div className="mb-8">
             <ActionsAndActivity
               repositories={repositories}
@@ -97,7 +93,6 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Analytics Dashboard */}
           <DashboardAnalytics
             userProfile={userProfile}
             repositories={repositories}

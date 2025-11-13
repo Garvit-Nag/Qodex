@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 class EmbeddingService:
     def __init__(self):
         try:
-            # Create writable cache directory in /app
+
             cache_dir = "/app/models_cache"
             os.makedirs(cache_dir, exist_ok=True)
             
-            # Set HuggingFace environment variables to use our cache
+
             os.environ['HUGGINGFACE_HUB_CACHE'] = cache_dir
             os.environ['TRANSFORMERS_CACHE'] = cache_dir
             os.environ['HF_HOME'] = cache_dir
@@ -21,7 +21,6 @@ class EmbeddingService:
             print(f"🔧 [CACHE] Using cache directory: {cache_dir}", flush=True)
             logger.info(f"🔧 Using cache directory: {cache_dir}")
             
-            # Load model with explicit cache folder
             self.model = SentenceTransformer(
                 'all-MiniLM-L6-v2',
                 cache_folder=cache_dir,
@@ -71,7 +70,6 @@ Code:
                 }
                 embedded_chunks.append(embedded_chunk)
                 
-                # Progress logging
                 if (i + 1) % 10 == 0:
                     print(f"✅ [EMBED] Processed {i + 1}/{len(chunks)} embeddings", flush=True)
                     

@@ -5,7 +5,6 @@ import LiquidEther from '@/components/LiquidEther';
 export default function Loading() {
   return (
     <div className="min-h-screen bg-white dark:bg-black relative">
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -18,7 +17,6 @@ export default function Loading() {
         />
       </div>
 
-      {/* Custom Loader - Remove the backdrop from the component */}
       <div className="fixed inset-0 flex items-center justify-center z-10">
         <div className="loader">
           <div></div>

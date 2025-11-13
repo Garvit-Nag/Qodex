@@ -39,7 +39,6 @@ export default function ChatSources({ sources }: ChatSourcesProps) {
       <div className="space-y-4">
         {sources.map((source, index) => (
           <div key={index} className="border border-gray-300 dark:border-white/30 rounded-xl overflow-hidden">
-            {/* File Header - Same style as chat header */}
             <div className="flex items-center justify-between px-4 py-3 bg-white/90 dark:bg-white/5 backdrop-blur-md border-b border-gray-300 dark:border-white/20">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="w-2 h-2 bg-gray-900 dark:bg-gray-200 rounded-full"></div>
@@ -62,7 +61,6 @@ export default function ChatSources({ sources }: ChatSourcesProps) {
               </button>
             </div>
 
-            {/* Code Content - Just outline, no background */}
             <div className="p-4">
               <pre className="text-xs font-mono text-gray-700 dark:text-white/80 whitespace-pre-wrap overflow-x-auto">
                 {source.preview || source.content || 'No content available'}

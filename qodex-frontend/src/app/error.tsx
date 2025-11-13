@@ -31,7 +31,6 @@ export default function Error({ error, reset }: ErrorProps) {
     return () => clearInterval(timer);
   }, []);
 
-  // Handle redirect outside of render
   useEffect(() => {
     if (shouldRedirect) {
       router.push('/');
@@ -40,7 +39,6 @@ export default function Error({ error, reset }: ErrorProps) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4">
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -53,15 +51,12 @@ export default function Error({ error, reset }: ErrorProps) {
         />
       </div>
 
-      {/* Modal-sized content */}
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl p-6 shadow-xl">
-          {/* Error Icon */}
           <div className="w-12 h-12 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center justify-center mx-auto mb-4">
             <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
 
-          {/* Error Message */}
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 text-center">
             Something went wrong
           </h1>
@@ -70,14 +65,12 @@ export default function Error({ error, reset }: ErrorProps) {
             We encountered an unexpected error. Please try again.
           </p>
 
-          {/* Countdown */}
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 mb-4 text-center">
             <p className="text-xs text-gray-600 dark:text-gray-400">
               Redirecting to home in <span className="font-medium">{countdown}s</span>
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="space-y-2">
             <button
               onClick={reset}

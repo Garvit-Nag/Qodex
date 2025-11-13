@@ -14,14 +14,11 @@ class PineconeService:
             if not settings.pinecone_api_key:
                 raise Exception("PINECONE_API_KEY environment variable is required")
             
-            # Initialize Pinecone client
             self.pc = Pinecone(api_key=settings.pinecone_api_key)
             
-            # Check if index exists, create if not
             self.index_name = settings.pinecone_index_name
             self._ensure_index_exists()
             
-            # Connect to index
             self.index = self.pc.Index(self.index_name)
             
             print(f"✅ [PINECONE] Connected to index: {self.index_name}", flush=True)
@@ -42,7 +39,7 @@ class PineconeService:
                 
                 self.pc.create_index(
                     name=self.index_name,
-                    dimension=384,  # all-MiniLM-L6-v2 embedding dimension
+                    dimension=384,  
                     metric='cosine',
                     spec=ServerlessSpec(
                         cloud='aws',
@@ -78,12 +75,11 @@ class PineconeService:
                         "end_line": chunk['end_line'],
                         "chunk_type": chunk['chunk_type'],
                         "content_length": chunk['content_length'],
-                        "content": chunk['content'][:1000]  # Pinecone metadata limit
+                        "content": chunk['content'][:1000] 
                     }
                 }
                 vectors.append(vector)
             
-            # Batch upsert in chunks of 100
             batch_size = 100
             total_batches = (len(vectors) + batch_size - 1) // batch_size
             
@@ -91,7 +87,6 @@ class PineconeService:
                 end_idx = min(i + batch_size, len(vectors))
                 batch_vectors = vectors[i:end_idx]
                 
-                # Upsert to Pinecone
                 self.index.upsert(
                     vectors=batch_vectors,
                     namespace=f"repo_{repository_id}"
@@ -112,7 +107,7 @@ class PineconeService:
         try:
             print(f"🔍 [PINECONE] Searching for {top_k} similar chunks in repository {repository_id}", flush=True)
             
-            # Query Pinecone with repository namespace
+
             results = self.index.query(
                 vector=query_embedding,
                 top_k=top_k,
@@ -123,7 +118,7 @@ class PineconeService:
             
             search_results = []
             for match in results.matches:
-                similarity = match.score  # Cosine similarity (0-1, higher is better)
+                similarity = match.score  
                 metadata = match.metadata
                 
                 search_results.append({
@@ -149,7 +144,6 @@ class PineconeService:
         try:
             namespace = f"repo_{repository_id}"
             
-            # Delete all vectors in the namespace
             self.index.delete(delete_all=True, namespace=namespace)
             
             print(f"🗑️ [PINECONE] Deleted all data for repository {repository_id}", flush=True)

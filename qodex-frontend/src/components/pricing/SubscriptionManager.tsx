@@ -39,7 +39,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
       await refreshUserProfile();
       setSuccess(true);
       
-      // Auto close after success
       setTimeout(() => {
         onClose();
       }, 2000);
@@ -56,7 +55,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
     return (
       <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div className="bg-card rounded-2xl p-4 max-w-lg w-full border border-border">
-          {/* Success Header */}
           <div className="text-center mb-4">
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
               <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -69,7 +67,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
             </p>
           </div>
 
-          {/* Success Info Card */}
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg p-4 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
@@ -82,7 +79,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
             </div>
           </div>
 
-          {/* Auto Close Message */}
           <div className="text-center text-xs text-muted-foreground">
             This dialog will close automatically in 2 seconds
           </div>
@@ -94,7 +90,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-2xl p-4 max-w-lg w-full border border-border">
-        {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-xl font-bold text-foreground mb-1">
             Cancel Subscription
@@ -104,7 +99,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
           </p>
         </div>
 
-       {/* Warning Card */}
 <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/50 rounded-lg p-4 mb-4">
   <div className="flex items-center gap-3">
     <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
@@ -117,7 +111,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
   </div>
 </div>
 
-{/* Cancellation Details */}
 <div className="space-y-3 mb-4">
   <div className="flex items-start gap-3 p-3 bg-gray-100 dark:bg-muted/20 rounded-lg border border-border/30">
     <div className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 flex-shrink-0"></div>
@@ -144,7 +137,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
   </div>
 </div>
 
-{/* Error Message */}
 {error && (
   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-3 mb-4">
     <div className="flex items-center gap-2">
@@ -154,7 +146,6 @@ export default function SubscriptionManager({ onClose }: SubscriptionManagerProp
   </div>
 )}
 
-        {/* Buttons */}
         <div className="flex gap-3">
           <button
             onClick={onClose}

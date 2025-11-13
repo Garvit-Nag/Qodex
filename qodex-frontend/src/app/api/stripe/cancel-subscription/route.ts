@@ -15,10 +15,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User ID and subscription ID are required' }, { status: 400 });
     }
 
-    // Cancel the subscription in Stripe
     await stripe.subscriptions.cancel(subscriptionId);
 
-    // Update user profile in Appwrite
     await databases.updateDocument(
       DATABASE_ID,
       USER_PROFILES_COLLECTION_ID,

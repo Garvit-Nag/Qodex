@@ -98,9 +98,7 @@ CRITICAL: Every code reference MUST include the file path and line numbers from 
 Your detailed markdown response:"""
             
             response = self.model.generate_content(prompt)
-            
-            # --- START: BEST FIX ---
-            # Clean the response text to remove markdown code block wrappers
+           
             response_text = response.text
             
             if response_text.startswith("```markdown"):
@@ -111,8 +109,7 @@ Your detailed markdown response:"""
             if response_text.endswith("```"):
                 response_text = response_text[:-len("```")]
                 
-            response_text = response_text.strip() # Remove any leading/trailing whitespace
-            # --- END: BEST FIX ---
+            response_text = response_text.strip() 
 
             sources = []
             for chunk in code_chunks:
@@ -125,7 +122,7 @@ Your detailed markdown response:"""
                 })
             
             return {
-                'response': response_text,  # Use the cleaned text
+                'response': response_text,  
                 'sources': sources,
                 'context_chunks_used': len(code_chunks),
                 'repository_name': repository_name,

@@ -10,19 +10,17 @@ import logging
 import logging
 import sys
 
-# Force logging to stdout for HuggingFace visibility
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout)
     ],
-    force=True  # Override any existing config
+    force=True  
 )
 
 logger = logging.getLogger(__name__)
 
-# Ensure all loggers use stdout
 for handler in logging.root.handlers:
     handler.stream = sys.stdout
 
@@ -31,7 +29,6 @@ router = APIRouter()
 async def process_repository_background(repository_id: int, user_id: str):
     """Background task to process repository with hybrid RAG"""
     
-    # Force stdout for this specific task
     import sys
     
     def force_log(message):
@@ -134,17 +131,14 @@ async def add_repository(
 ):
     """Add new repository for QODEX processing"""
     
-    # Verify user_id matches between header and body
     if repository.user_id != user_id:
         raise HTTPException(status_code=400, detail="User ID mismatch between header and body")
     
     logger.info(f"📥 NEW QODEX REQUEST: {repository.name} - {repository.github_url} (user: {user_id})")
     
-    # Validate GitHub URL
     if not repository.github_url.startswith(('https://github.com/', 'git@github.com:')):
         raise HTTPException(status_code=400, detail="Invalid GitHub URL format")
     
-    # Check for duplicates for this user
     existing = db.query(Repository).filter(
         Repository.github_url == repository.github_url,
         Repository.user_id == user_id
@@ -156,7 +150,6 @@ async def add_repository(
             detail=f"Repository already exists with ID: {existing.id}. Status: {existing.status.value}"
         )
     
-    # Create repository record
     db_repository = Repository(
         name=repository.name,
         github_url=repository.github_url,
@@ -167,7 +160,6 @@ async def add_repository(
     db.commit()
     db.refresh(db_repository)
     
-    # Start background processing
     background_tasks.add_task(process_repository_background, db_repository.id, user_id)
     
     logger.info(f"✅ Repository {db_repository.id} created and queued for processing (user: {user_id})")
@@ -222,7 +214,6 @@ async def delete_repository(
         raise HTTPException(status_code=404, detail="Repository not found or access denied")
     
     try:
-        # Delete vector data from ChromaDB
         vector_service = VectorService()
         await vector_service.delete_repository_data(repository_id)
         logger.info(f"🗑️ Deleted vector data for repository {repository_id}")
@@ -230,7 +221,6 @@ async def delete_repository(
         logger.warning(f"⚠️ Error deleting vector data for repo {repository_id}: {e}")
     
     try:
-        # Delete conversations and messages (CASCADE should handle this)
         db.delete(repository)
         db.commit()
         logger.info(f"🗑️ Successfully deleted repository {repository_id} (user: {user_id})")
@@ -261,7 +251,6 @@ async def get_repository_status(
     if not repository:
         raise HTTPException(status_code=404, detail="Repository not found or access denied")
     
-    # Count conversations for this repository
     from app.models.conversation import Conversation
     conversation_count = db.query(Conversation).filter(
         Conversation.repository_id == repository_id
@@ -281,7 +270,6 @@ async def get_repository_status(
         "processing_complete": repository.status in [RepositoryStatusEnum.READY, RepositoryStatusEnum.FAILED]
     }
 
-# ✅ NEW: User-specific routes
 @router.get("/users/{target_user_id}/repositories", response_model=List[RepositoryResponse])
 async def get_specific_user_repositories(
     target_user_id: str,
@@ -291,7 +279,6 @@ async def get_specific_user_repositories(
 ):
     """Get repositories for a specific user (must be same user)"""
     
-    # Security: Users can only access their own repositories
     if user_id != target_user_id:
         raise HTTPException(status_code=403, detail="Access denied - can only access your own repositories")
     

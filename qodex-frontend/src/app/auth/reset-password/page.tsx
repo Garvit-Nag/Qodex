@@ -40,7 +40,6 @@ export default function ResetPassword() {
     setError('');
     setSuccessMessage('');
 
-    // Validation
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       setLoading(false);
@@ -83,7 +82,6 @@ export default function ResetPassword() {
 
   return (
     <div className="h-screen overflow-hidden bg-white dark:bg-black relative">
-      {/* Full Background DotGrid */}
       <div className="absolute inset-0 z-0">
         <DotGrid
           dotSize={5}
@@ -96,17 +94,13 @@ export default function ResetPassword() {
         />
       </div>
 
-      {/* Translucent Navbar */}
       <div className="relative z-50">
         <Navbar />
       </div>
 
-      {/* Main Content - SAME LAYOUT AS SIGN-IN */}
       <div className="absolute inset-0 pt-16 z-10 flex items-center justify-center px-8 gap-16">
-        {/* Reset Password Box - EXACT SAME SIZE AS SIGN-IN */}
         <div className="w-96 flex-shrink-0">
           <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 space-y-5">
-            {/* Logo */}
             <div className="text-center">
               <Link href="/" className="inline-block">
                 <Image
@@ -134,7 +128,6 @@ export default function ResetPassword() {
               </p>
             </div>
 
-            {/* Error Message */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg backdrop-blur-sm">
                 <div className="flex items-center">
@@ -146,7 +139,6 @@ export default function ResetPassword() {
               </div>
             )}
 
-            {/* Success Message */}
             {successMessage && (
               <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-3 py-2 rounded-lg backdrop-blur-sm">
                 <div className="flex items-center">
@@ -158,7 +150,6 @@ export default function ResetPassword() {
               </div>
             )}
 
-            {/* Reset Password Form */}
             <form className="space-y-3" onSubmit={handleResetPassword}>
               <div>
                 <label htmlFor="password" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -198,7 +189,6 @@ export default function ResetPassword() {
                 />
               </div>
 
-              {/* Password Requirements */}
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg backdrop-blur-sm">
                 <p className="text-xs">
                   Password must be at least 8 characters long and contain letters and numbers.
@@ -240,7 +230,6 @@ export default function ResetPassword() {
           </div>
         </div>
 
-        {/* Browser Window - SAME AS SIGN-IN */}
         <div className="hidden xl:flex flex-shrink-0 items-center">
           <BrowserWindow className="w-[800px]" />
         </div>

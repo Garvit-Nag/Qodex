@@ -93,7 +93,6 @@ export default function SignIn() {
 
   return (
     <div className="h-screen overflow-hidden bg-white dark:bg-black relative">
-      {/* Full Background DotGrid */}
       <div className="absolute inset-0 z-0">
         <DotGrid
           dotSize={5}
@@ -106,17 +105,13 @@ export default function SignIn() {
         />
       </div>
 
-      {/* Translucent Navbar */}
       <div className="relative z-50">
         <Navbar />
       </div>
 
-      {/* Main Content */}
       <div className="absolute inset-0 pt-16 z-10 flex items-center justify-center px-8 gap-16">
-        {/* Sign In Box */}
         <div className="w-96 flex-shrink-0">
           <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 space-y-5">
-            {/* Logo */}
             <div className="text-center">
               <Link href="/" className="inline-block">
                 <Image
@@ -144,7 +139,6 @@ export default function SignIn() {
               </p>
             </div>
 
-            {/* Error Message */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg backdrop-blur-sm">
                 <div className="flex items-center">
@@ -156,7 +150,6 @@ export default function SignIn() {
               </div>
             )}
 
-            {/* Success Message */}
             {forgotPasswordMessage && (
               <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-3 py-2 rounded-lg backdrop-blur-sm">
                 <div className="flex items-center">
@@ -170,7 +163,6 @@ export default function SignIn() {
 
             {!showForgotPassword ? (
               <>
-                {/* Google Sign In */}
                 <div>
                   <button
                     onClick={handleGoogleSignIn}
@@ -187,7 +179,6 @@ export default function SignIn() {
                   </button>
                 </div>
 
-                {/* SYMMETRIC DIVIDER */}
                 <div className="relative flex items-center">
                   <div className="flex-grow border-t border-gray-300 dark:border-white/20"></div>
                   <span className="flex-shrink mx-4 text-xs text-gray-500 dark:text-gray-400">
@@ -196,7 +187,6 @@ export default function SignIn() {
                   <div className="flex-grow border-t border-gray-300 dark:border-white/20"></div>
                 </div>
 
-                {/* Email Form */}
                 <form className="space-y-3" onSubmit={handleEmailSignIn}>
                   <div>
                     <label htmlFor="email" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -330,7 +320,6 @@ export default function SignIn() {
         </div>
 
 
-        {/* Browser Window - FIXED SIZE - Hidden on smaller screens */}
         <div className="hidden xl:flex flex-shrink-0 items-center">
           <BrowserWindow className="w-[800px]" />
         </div>

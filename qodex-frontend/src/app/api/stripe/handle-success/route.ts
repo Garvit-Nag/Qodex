@@ -11,10 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Payment service not available' }, { status: 500 });
     }
 
-    // Retrieve the session from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    // ✅ Check if metadata exists and validate
     if (!session.metadata) {
       console.error('❌ No metadata found in session:', sessionId);
       return NextResponse.json({ error: 'Session metadata missing' }, { status: 400 });
@@ -22,14 +20,12 @@ export async function POST(request: NextRequest) {
 
     const { planId, userId: sessionUserId } = session.metadata;
 
-    // Validate session data
     if (!planId || !sessionUserId) {
       console.error('❌ Missing required metadata:', { planId, sessionUserId });
       return NextResponse.json({ error: 'Invalid session metadata' }, { status: 400 });
     }
 
     if (session.payment_status === 'paid' && sessionUserId === userId) {
-      // Update user subscription
       const subscriptionId = session.subscription as string;
 
       const currentDate = new Date().toISOString();

@@ -48,7 +48,6 @@ export default function VerificationPending() {
 
   return (
     <div className="h-screen overflow-hidden bg-white dark:bg-black relative">
-      {/* Full Background DotGrid */}
       <div className="absolute inset-0 z-0">
         <DotGrid
           dotSize={5}
@@ -61,17 +60,13 @@ export default function VerificationPending() {
         />
       </div>
 
-      {/* Translucent Navbar */}
       <div className="relative z-50">
         <Navbar />
       </div>
 
-      {/* Main Content - SAME LAYOUT AS SIGN-IN */}
       <div className="absolute inset-0 pt-16 z-10 flex items-center justify-center px-8 gap-16">
-        {/* Verification Pending Box - SAME SIZE AS SIGN-IN */}
         <div className="w-96 flex-shrink-0">
           <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 space-y-5">
-            {/* Logo */}
             <div className="text-center">
               <Link href="/" className="inline-block">
                 <Image
@@ -99,14 +94,12 @@ export default function VerificationPending() {
               </p>
             </div>
 
-            {/* Email Icon */}
             <div className="flex justify-center py-2">
               <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
                 <Mail className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
 
-            {/* Content */}
             <div className="space-y-3">
               <div className="text-center">
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
@@ -125,7 +118,6 @@ export default function VerificationPending() {
               </p>
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
               <button
                 onClick={handleResendVerification}
@@ -159,13 +151,11 @@ export default function VerificationPending() {
           </div>
         </div>
 
-        {/* Browser Window - SAME AS SIGN-IN */}
         <div className="hidden xl:flex flex-shrink-0 items-center">
           <BrowserWindow className="w-[800px]" />
         </div>
       </div>
 
-      {/* Toast Notification */}
       {toast && (
         <Toast
           message={toast.message}

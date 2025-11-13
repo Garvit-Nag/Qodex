@@ -23,15 +23,12 @@ export default function AuthRequiredModal({ onClose }: AuthRequiredModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleCancel}
       />
 
-      {/* Modal */}
       <div className="relative bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300 scale-100">
-        {/* Close Button */}
         <button
           onClick={handleCancel}
           className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/10 transition-colors"
@@ -39,24 +36,19 @@ export default function AuthRequiredModal({ onClose }: AuthRequiredModalProps) {
           <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
 
-        {/* Content */}
         <div className="text-center">
-          {/* Icon */}
           <div className="mx-auto w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4">
             <User className="w-8 h-8 text-purple-600 dark:text-purple-400" />
           </div>
 
-          {/* Title */}
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
             Sign In Required
           </h3>
 
-          {/* Message */}
           <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
             You need to sign in to upgrade your plan and unlock premium features.
           </p>
 
-          {/* Action Buttons */}
           <div className="flex gap-3">
             <button
               onClick={handleCancel}

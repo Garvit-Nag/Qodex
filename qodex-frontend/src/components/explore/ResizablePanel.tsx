@@ -56,7 +56,6 @@ export default function ResizablePanel({
     >
       {children}
 
-      {/* Resize Handle */}
       <div
         className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-purple-400/50 transition-colors group"
         onMouseDown={() => setIsResizing(true)}

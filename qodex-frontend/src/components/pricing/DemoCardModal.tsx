@@ -27,7 +27,6 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-2xl p-4 max-w-lg w-full border border-border">
-        {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-xl font-bold text-foreground mb-1">
             Demo Payment Details
@@ -37,9 +36,7 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
           </p>
         </div>
 
-        {/* Credit Card UI */}
         <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl p-4 mb-3 text-white relative overflow-hidden shadow-lg h-64">
-          {/* Top Row - Chip (left) + Mastercard Logo (right) */}
           <div className="flex justify-between items-start mb-4">
             <Image
               src="/chip-icon.png"
@@ -57,7 +54,6 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
             />
           </div>
 
-          {/* Card Number - Center with Copy Button in Same Line */}
           <div className="mb-4">
             <div className="text-xs opacity-70 mb-2 tracking-wider">CARD NUMBER</div>
             <div className="flex items-center gap-3">
@@ -78,8 +74,6 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
             </div>
           </div>
 
-          {/* Bottom Row - VALID THRU + CVC Together - Closer to Edge */}
-          {/* Bottom Row - VALID THRU + CVC Together - Closer to Edge */}
           <div className="absolute bottom-4 left-4 right-4">
             <div className="flex gap-12">
               <div>
@@ -94,7 +88,6 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
           </div>
         </div>
 
-        {/* Beautiful Instructions */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50">
             <div className="w-8 h-8 bg-gray-200 dark:bg-muted/50 rounded-lg flex items-center justify-center">
@@ -117,7 +110,6 @@ export default function DemoCardModal({ onClose, onContinue }: DemoCardModalProp
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3">
           <button
             onClick={onClose}
