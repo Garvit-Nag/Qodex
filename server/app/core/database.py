@@ -3,17 +3,17 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-# ✅ Production-ready engine configuration
+
 engine = create_engine(
     settings.database_url,
-    pool_size=5,           # Reduced for Neon free tier
-    max_overflow=10,       # Reduced for free tier
+    pool_size=5,           
+    max_overflow=10,       
     pool_pre_ping=True,
     pool_recycle=3600,
-    echo=False,            # Disable SQL logging in production
+    echo=False,            
     pool_timeout=30,
     connect_args={
-        "sslmode": "require"  # Required for Neon
+        "sslmode": "require" 
     } if settings.database_url.startswith("postgresql") else {}
 )
 
