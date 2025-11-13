@@ -192,7 +192,6 @@ export default function Navbar() {
 
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-64 bg-white/90 dark:bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-300 dark:border-white/20 py-2 overflow-hidden">
-                      {/* User Info */}
                       <div className="px-4 py-3 border-b border-gray-200 dark:border-white/10">
                         <div className="flex items-center space-x-3">
                           <div className="relative">

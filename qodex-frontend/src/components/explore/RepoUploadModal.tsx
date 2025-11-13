@@ -118,7 +118,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-2xl p-4 max-w-lg w-full border border-border">
-        {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-xl font-bold text-foreground mb-1">
             Add Repository
