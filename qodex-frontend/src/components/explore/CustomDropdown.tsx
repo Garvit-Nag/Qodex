@@ -25,7 +25,7 @@ export default function CustomDropdown({
   const readyRepos = repositories.filter(repo => getRepoStatus(repo).toLowerCase() === 'ready');
 
   useEffect(() => {
-    onOpenChange(isOpen); // Notify parent when dropdown opens/closes
+    onOpenChange(isOpen); 
   }, [isOpen, onOpenChange]);
 
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function CustomDropdown({
 
   return (
     <div className="relative flex-1" ref={dropdownRef}>
-      {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-white/10 hover:bg-white/90 dark:hover:bg-white/15 border border-gray-300 dark:border-white/20 rounded-xl text-gray-900 dark:text-white text-sm transition-all duration-300 backdrop-blur-sm shadow-lg"
@@ -57,8 +56,6 @@ export default function CustomDropdown({
         <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Dropdown Menu - Super high z-index */}
-      {/* Dropdown Menu - True black/gray colors, no blue tint */}
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 z-[9999] bg-white/98 dark:bg-black/95 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-xl shadow-2xl overflow-hidden">
           <div className="max-h-60 overflow-y-auto custom-scrollbar">

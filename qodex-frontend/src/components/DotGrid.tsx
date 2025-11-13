@@ -57,8 +57,8 @@ function hexToRgb(hex: string) {
 const DotGrid: React.FC<DotGridProps> = ({
   dotSize = 5,
   gap = 15,
-  baseColor, // Will be set based on theme
-  activeColor, // Will be set based on theme
+  baseColor, 
+  activeColor, 
   proximity = 120,
   speedTrigger = 100,
   shockRadius = 250,
@@ -83,7 +83,6 @@ const DotGrid: React.FC<DotGridProps> = ({
     lastY: 0
   });
 
-  // Set colors based on theme
   const [currentBaseColor, setCurrentBaseColor] = useState(baseColor || '#271E37');
   const [currentActiveColor, setCurrentActiveColor] = useState(activeColor || '#FF29ED');
 
@@ -92,18 +91,17 @@ const DotGrid: React.FC<DotGridProps> = ({
       const isDark = document.documentElement.classList.contains('dark');
       if (!baseColor && !activeColor) {
         if (isDark) {
-          setCurrentBaseColor('#271E37'); // Dark mode
+          setCurrentBaseColor('#271E37'); 
           setCurrentActiveColor('#FF29ED');
         } else {
-          setCurrentBaseColor('#9CA3AF'); // Light mode - subtle gray
-          setCurrentActiveColor('#8B5CF6'); // Light mode - purple
+          setCurrentBaseColor('#9CA3AF'); 
+          setCurrentActiveColor('#8B5CF6'); 
         }
       }
     };
 
     updateThemeColors();
     
-    // Watch for theme changes
     const observer = new MutationObserver(updateThemeColors);
     observer.observe(document.documentElement, {
       attributes: true,

@@ -48,7 +48,6 @@ export default function ChatSidebar({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header - Exact height match with chat header */}
       <div className="px-6 py-4 border-b border-gray-300 dark:border-white/20 bg-white/90 dark:bg-white/5 backdrop-blur-md flex items-center" style={{ minHeight: '73px' }}>
         <button
           onClick={onNewChat}
@@ -59,7 +58,6 @@ export default function ChatSidebar({
         </button>
       </div>
 
-      {/* Repository List with custom scrollbar */}
       <div className="flex-1 overflow-auto p-4 custom-scrollbar">
         {loading ? (
           <div className="space-y-3">
@@ -122,7 +120,6 @@ export default function ChatSidebar({
         )}
       </div>
 
-      {/* User Info Footer - Exact height match with input area */}
       <div className="px-4 py-4 border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5" style={{ minHeight: '65px' }}>
         <div className="text-xs text-gray-600 dark:text-white/60 space-y-1 flex flex-col justify-center h-full">
           <div className="flex justify-between">

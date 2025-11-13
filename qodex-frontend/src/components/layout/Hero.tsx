@@ -17,7 +17,6 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Animated Background */}
       <div className="absolute inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -37,9 +36,7 @@ export default function Hero() {
           autoRampDuration={0.6}
         />
       </div>
-      {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto pointer-events-none">
-        {/* Modern Announcement Badge - Purple theme for both modes */}
         <div className="mb-6 pointer-events-auto">
           <div className="inline-flex items-center space-x-2 bg-purple-500/10 dark:bg-purple-500/10 backdrop-blur-sm border border-purple-500/20 dark:border-purple-500/20 rounded-full px-4 py-2 text-sm text-gray-700 dark:text-white/80">
             <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,20 +45,16 @@ export default function Hero() {
             <span>AI-Powered Code Intelligence</span>
           </div>
         </div>
-        {/* Main Headings */}
         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
           Unlock Code Insights.
         </h1>
         <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
           Query Knowledge Within.
         </h2>
-        {/* Description */}
         <p className="text-lg md:text-xl text-gray-800 dark:text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed">
           Transform your codebase into a knowledgeable resource, ready for instant querying. Navigate complex logic with semantic clarity.
         </p>
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto">
-          {/* Get Started - Same color as navbar button */}
           <Link
             href="/explore"
             onClick={handleGetStartedClick}
@@ -69,7 +62,6 @@ export default function Hero() {
           >
             Get Started
           </Link>
-          {/* View Demo - Purple theme in light mode, original glassmorphism in dark mode */}
           <Link
             href="/about"
             className="inline-block bg-white/10 dark:bg-white/10 backdrop-blur-sm hover:bg-white/20 dark:hover:bg-white/20 text-gray-900 dark:text-white font-medium py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 border border-white/20 dark:border-white/20 hover:border-white/30 dark:hover:border-white/30"

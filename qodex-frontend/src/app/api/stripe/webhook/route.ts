@@ -7,13 +7,11 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if stripe is initialized
     if (!stripe) {
       console.error('❌ Stripe not initialized');
       return NextResponse.json({ error: 'Payment service not available' }, { status: 500 });
     }
 
-    // ✅ Get raw body as ArrayBuffer then convert to Buffer
     const arrayBuffer = await request.arrayBuffer();
     const body = Buffer.from(arrayBuffer);
 
@@ -27,7 +25,6 @@ export async function POST(request: NextRequest) {
     let event;
 
     try {
-      // ✅ Use Buffer instead of string for signature verification
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err: any) {
       console.error('❌ Webhook signature verification failed:', err.message);
@@ -43,13 +40,11 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Webhook event received:', event.type);
 
-    // Handle the event
     switch (event.type) {
       case 'checkout.session.completed':
         const session = event.data.object;
         console.log('💳 Payment completed:', session.id);
 
-        // Update user subscription
         if (session.metadata?.userId && session.metadata?.planId) {
           await updateUserSubscription(
             session.metadata.userId,
@@ -63,7 +58,6 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object;
         console.log('❌ Subscription cancelled:', subscription.id);
 
-        // Handle subscription cancellation
         if (subscription.metadata?.userId) {
           await cancelUserSubscription(subscription.metadata.userId);
         }
@@ -81,7 +75,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper function to update user subscription
 async function updateUserSubscription(userId: string, planId: string, subscriptionId: string) {
   try {
     const currentDate = new Date().toISOString();
@@ -109,7 +102,6 @@ async function updateUserSubscription(userId: string, planId: string, subscripti
   }
 }
 
-// Helper function to cancel user subscription
 async function cancelUserSubscription(userId: string) {
   try {
     await databases.updateDocument(

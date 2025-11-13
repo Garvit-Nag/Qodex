@@ -37,7 +37,6 @@ export default function ChatLayout({
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -50,12 +49,10 @@ export default function ChatLayout({
         />
       </div>
 
-      {/* Main Content - Same spacing as navbar */}
       <div className="relative z-10 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-[calc(100vh-5rem)]">
             <ResizablePanelGroup direction="horizontal" className="h-full">
-              {/* Sidebar Panel */}
               <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
                 <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-3xl shadow-xl mr-3">
                   <ChatSidebar
@@ -71,10 +68,8 @@ export default function ChatLayout({
                 </div>
               </ResizablePanel>
 
-              {/* Resizable Handle */}
               <ResizableHandle withHandle />
 
-              {/* Main Chat Panel */}
               <ResizablePanel defaultSize={75}>
                 <div className="h-full ml-3">
                   <ChatMainPanel

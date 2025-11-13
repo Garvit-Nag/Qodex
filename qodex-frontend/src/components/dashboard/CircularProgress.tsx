@@ -21,17 +21,16 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
   const strokeDashoffset = circumference - (animatedPercentage / 100) * circumference;
 
   const getColor = () => {
-    if (animatedPercentage >= 90) return '#ef4444'; // red
-    if (animatedPercentage >= 75) return '#f59e0b'; // yellow
-    return '#10b981'; // green
+    if (animatedPercentage >= 90) return '#ef4444'; 
+    if (animatedPercentage >= 75) return '#f59e0b'; 
+    return '#10b981'; 
   };
 
   useEffect(() => {
     if (hasAnimated) return;
 
-    // Counter animation for the number
-    const duration = 2500; // 2.5 seconds for smoother animation
-    const steps = 100; // More steps for smoother animation
+    const duration = 2500; 
+    const steps = 100; 
     const stepDuration = duration / steps;
     let currentStep = 0;
 
@@ -39,7 +38,6 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
       currentStep++;
       const progress = currentStep / steps;
       
-      // Stronger ease-out for fast start, gradual slow
       const easeOut = 1 - Math.pow(1 - progress, 4);
       
       setAnimatedUsed(Math.round(easeOut * used));
@@ -56,7 +54,6 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
     return () => clearInterval(counterInterval);
   }, [used, percentage, hasAnimated]);
 
-  // Update immediately if values change after initial animation
   useEffect(() => {
     if (hasAnimated) {
       setAnimatedUsed(used);
@@ -71,7 +68,6 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
         width={radius * 2}
         className="transform -rotate-90"
       >
-        {/* Background circle */}
         <circle
           stroke="currentColor"
           fill="transparent"
@@ -81,7 +77,6 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
           cy={radius}
           className="text-gray-200 dark:text-gray-700"
         />
-        {/* Progress circle with animation */}
         <circle
           stroke={getColor()}
           fill="transparent"
@@ -98,7 +93,6 @@ export default function CircularProgress({ percentage, used, total }: CircularPr
         />
       </svg>
       
-      {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="text-4xl font-bold text-gray-900 dark:text-white tabular-nums">
           {animatedUsed}/{total}

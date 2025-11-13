@@ -20,7 +20,6 @@ export default function PricingPage() {
   const [showPremiumAlertModal, setShowPremiumAlertModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Handle payment success
   useEffect(() => {
     const handlePaymentSuccess = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -49,19 +48,16 @@ export default function PricingPage() {
   }, [user, refreshUserProfile]);
 
   const handleUpgrade = async () => {
-    // Check if user is signed in
     if (!user) {
       setShowAuthRequiredModal(true);
       return;
     }
 
-    // Check if user is already premium
     if (userProfile?.subscription_tier === 'premium') {
       setShowPremiumAlertModal(true);
       return;
     }
 
-    // Proceed with upgrade flow
     setShowDemoModal(true);
   };
 
@@ -101,7 +97,6 @@ export default function PricingPage() {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -114,10 +109,8 @@ export default function PricingPage() {
         />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 pt-24 pb-16">
         <div className="container mx-auto px-6">
-          {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
               Choose Your Plan
@@ -127,7 +120,6 @@ export default function PricingPage() {
             </p>
           </div>
 
-          {/* Current Plan Display */}
           {userProfile && (
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 shadow-lg dark:bg-white/10 backdrop-blur-md border border-gray-200/50 dark:border-white/20 rounded-full">
@@ -142,9 +134,7 @@ export default function PricingPage() {
             </div>
           )}
 
-          {/* Pricing Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
             <div className="relative">
               <div className="h-full bg-white/90 shadow-xl dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-3xl p-8 hover:bg-white/95 dark:hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex flex-col min-h-[480px]">
                 <div className="text-center mb-6">
@@ -187,9 +177,7 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* Premium Plan */}
             <div className="relative">
-              {/* Most Popular Badge */}
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
                 <div className="flex items-center gap-2 bg-white/90 shadow-lg dark:bg-gray-200 text-gray-900 dark:text-black px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-gray-200/50 dark:border-gray-300/50">
                   <Crown className="w-4 h-4" />
@@ -197,7 +185,6 @@ export default function PricingPage() {
                 </div>
               </div>
 
-              {/* Premium Card */}
               <div className="h-full bg-white/90 shadow-xl dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-3xl p-8 hover:bg-white/95 dark:hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex flex-col min-h-[480px]">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -250,7 +237,6 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* FAQ */}
           <div className="mt-24 text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12">
               Frequently Asked Questions
@@ -269,7 +255,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Modals */}
       {showDemoModal && (
         <DemoCardModal
           onClose={() => setShowDemoModal(false)}

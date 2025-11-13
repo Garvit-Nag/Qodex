@@ -21,11 +21,9 @@ export default function Toast({ message, type, onClose, duration = 4000 }: Toast
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
-      {/* Toast Container */}
       <div className="pointer-events-auto transform transition-all duration-300 ease-out animate-slide-up">
         <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-2xl p-4 w-full max-w-md">
           <div className="flex items-start gap-3">
-            {/* Icon */}
             <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
               type === 'success' 
                 ? 'bg-green-100 dark:bg-green-900/20' 
@@ -38,7 +36,6 @@ export default function Toast({ message, type, onClose, duration = 4000 }: Toast
               )}
             </div>
 
-            {/* Message */}
             <div className="flex-1 pt-0.5">
               <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {type === 'success' ? 'Success' : 'Error'}
@@ -48,7 +45,6 @@ export default function Toast({ message, type, onClose, duration = 4000 }: Toast
               </p>
             </div>
 
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="flex-shrink-0 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"

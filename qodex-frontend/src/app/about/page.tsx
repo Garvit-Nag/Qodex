@@ -76,7 +76,6 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -89,10 +88,8 @@ export default function AboutPage() {
         />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 pt-24 pb-16">
         <div className="container mx-auto px-6">
-          {/* Page Header - Compact */}
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
               How Qodex Works
@@ -103,7 +100,6 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* How It Works Steps - Horizontal Grid */}
           <section className="mb-20">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
@@ -145,7 +141,6 @@ export default function AboutPage() {
             </div>
           </section>
 
-          {/* Features Section - Horizontal Grid */}
           <section>
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">

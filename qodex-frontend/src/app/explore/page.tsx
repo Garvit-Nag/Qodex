@@ -204,7 +204,6 @@ export default function ExplorePage() {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -217,7 +216,6 @@ export default function ExplorePage() {
         />
       </div>
 
-      {/* Custom Scrollbar Styles */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -240,15 +238,12 @@ export default function ExplorePage() {
         }
       `}</style>
 
-      {/* Main Content */}
       <div className="relative z-10 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-[calc(100vh-5rem)] py-6">
 
-            {/* Desktop Layout - Hidden on mobile */}
             <div className="hidden md:block h-full">
               <ResizablePanelGroup direction="horizontal" className="h-full gap-4">
-                {/* Sidebar Panel */}
                 <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="min-w-[280px]">
                   <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden">
                     <ChatSidebar
@@ -264,7 +259,6 @@ export default function ExplorePage() {
                   </div>
                 </ResizablePanel>
 
-                {/* Resizable Handle */}
                 <ResizableHandle
                   withHandle
                   className="w-2 bg-white/50 dark:bg-white/5 relative border border-gray-300 dark:border-white/20 rounded-lg backdrop-blur-sm"
@@ -273,7 +267,6 @@ export default function ExplorePage() {
                   <div className="absolute w-4 h-8 bg-gray-400 dark:bg-gray-500 rounded-full border-2 border-white dark:border-gray-900 shadow-lg cursor-col-resize"></div>
                 </ResizableHandle>
 
-                {/* Main Chat Panel */}
                 <ResizablePanel defaultSize={75} className="min-w-[400px]">
                   <div className="h-full bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden">
                     <ChatMainPanel
@@ -285,9 +278,7 @@ export default function ExplorePage() {
               </ResizablePanelGroup>
             </div>
 
-            {/* Mobile Layout - Hidden on desktop */}
             <div className="md:hidden h-full flex flex-col gap-4">
-              {/* Mobile Header - Compact design */}
               <div className="relative z-[9998] flex items-center justify-between gap-2 px-3 py-2.5 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl shadow-xl">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <button
@@ -320,7 +311,6 @@ export default function ExplorePage() {
                 )}
               </div>
 
-              {/* Mobile Chat Panel */}
               <div className={`flex-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 ${isDropdownOpen ? 'blur-sm pointer-events-none' : ''}`}>
                 <ChatMainPanel
                   selectedRepo={selectedRepo}
@@ -333,7 +323,6 @@ export default function ExplorePage() {
         </div>
       </div>
 
-      {/* Upload Modal */}
       {showUploadModal && (
         <RepoUploadModal
           onClose={() => setShowUploadModal(false)}
@@ -342,7 +331,6 @@ export default function ExplorePage() {
         />
       )}
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && repoToDelete && (
         <DeleteConfirmModal
           repoName={repoToDelete.name}

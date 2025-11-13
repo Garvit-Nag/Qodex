@@ -20,10 +20,8 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
   const [error, setError] = useState('');
   const { user } = useAuth();
 
-  // CORRECT: Use monthly quota system (NEW WAY)
   const isAtLimit = userProfile ? userProfile.repos_uploaded_this_month >= userProfile.max_repos_allowed : false;
 
-  // Auto-extract repo name from URL
   const handleUrlChange = (url: string) => {
     setRepoUrl(url);
     setError('');
@@ -45,7 +43,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
     setError('');
 
     try {
-      // Validate GitHub URL
       const githubUrlPattern = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)(\.git)?$/;
       const match = repoUrl.match(githubUrlPattern);
 
@@ -85,7 +82,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
 
       const qodexData = await response.json();
 
-      // Create repository record
       await databases.createDocument(
         DATABASE_ID,
         REPOSITORIES_COLLECTION_ID,
@@ -100,14 +96,13 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
         }
       );
 
-      // Update user profile with monthly quota (NEW WAY)
       await databases.updateDocument(
         DATABASE_ID,
         process.env.NEXT_PUBLIC_APPWRITE_USER_PROFILES_COLLECTION_ID!,
         user.$id,
         {
           repos_uploaded_this_month: (userProfile?.repos_uploaded_this_month || 0) + 1,
-          repos_uploaded_count: (userProfile?.repos_uploaded_count || 0) + 1, // Keep total count too
+          repos_uploaded_count: (userProfile?.repos_uploaded_count || 0) + 1, 
         }
       );
 
@@ -133,7 +128,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
           </p>
         </div>
 
-        {/* Warning for limit reached */}
         {isAtLimit && (
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4 flex items-center gap-3">
             <div className="flex-shrink-0">
@@ -148,16 +142,13 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4">
             <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Repository URL */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               GitHub Repository URL *
@@ -178,7 +169,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
             </div>
           </div>
 
-          {/* Repository Name */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               Display Name
@@ -193,7 +183,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
             />
           </div>
 
-          {/* Monthly Quota Info (NEW WAY) */}
           {userProfile && (
             <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
               <div className="text-xs text-muted-foreground">
@@ -202,7 +191,6 @@ export default function RepoUploadModal({ onClose, onUploadSuccess, userProfile 
             </div>
           )}
 
-          {/* Buttons */}
           <div className="flex gap-3">
             <button
               type="button"

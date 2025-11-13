@@ -34,7 +34,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Developer quotes for motivation
   const quotes = [
     "Code is poetry written in logic.",
     "Every expert was once a beginner.",
@@ -47,10 +46,8 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   const [currentQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
-  // All your existing useEffect hooks...
   useEffect(() => {
     if (repository && user) {
-      // RESET ALL STATE when repository changes
       setMessages([]);
       setMessageCount(0);
       setConversationId(null);
@@ -76,7 +73,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
-    // Only auto-scroll when USER sends a message, not when assistant responds
     if (lastMessage?.role === 'user') {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -87,7 +83,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       console.log('🔄 Checking quota - messageCount:', messageCount, 'tier:', userProfile.subscription_tier);
       checkQuota();
     }
-  }, [userProfile, conversationId, messageCount]); // Make sure messageCount is in dependencies
+  }, [userProfile, conversationId, messageCount]);
 
   const checkQuota = async () => {
     if (!userProfile) {
@@ -95,20 +91,17 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       return;
     }
 
-    // Premium users have unlimited messages
     if (userProfile.subscription_tier === 'premium') {
       setCanSend(true);
       return;
     }
 
-    // Free users: check if they've reached 25 messages
     if (messageCount >= 25) {
       console.log('🚫 Quota exceeded:', messageCount, 'messages sent');
       setCanSend(false);
       return;
     }
 
-    // If conversationId exists, also check via API
     if (conversationId !== null) {
       try {
         const canSendMsg = await canSendMessage(conversationId, user!.$id, userProfile);
@@ -125,7 +118,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
   };
 
   useEffect(() => {
-    // Wait for component to mount and messages to render
     const timer = setTimeout(() => {
       const messagesContainer = document.querySelector('.messages-container');
       if (!messagesContainer) {
@@ -139,10 +131,9 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
         const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
         console.log('Scroll:', { scrollTop, scrollHeight, clientHeight, isNearBottom, showButton: !isNearBottom });
-        setShowScrollButton(!isNearBottom && messages.length > 3); // Only show if there are messages
+        setShowScrollButton(!isNearBottom && messages.length > 3); 
       };
 
-      // Initial check
       handleScroll();
 
       messagesContainer.addEventListener('scroll', handleScroll);
@@ -153,7 +144,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [messages]); // Re-run when messages change
+  }, [messages]); 
 
   const loadChatHistory = async () => {
     setLoadingMessages(true);
@@ -272,7 +263,7 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
           const parsedError = JSON.parse(errorData);
           errorMessage = parsedError.detail || parsedError.error || errorMessage;
         } catch {
-          // Use default error message
+          
         }
 
         const errorResponse: ChatMessage = {
@@ -336,7 +327,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
     };
   };
 
-  // Enhanced markdown components with visible highlights
   const markdownComponents = {
     h1: ({ children }: any) => (
       <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b border-gray-300 dark:border-white/30 pb-2">
@@ -415,16 +405,13 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
 
   return (
     <div className="h-full flex flex-col overflow-hidden relative">
-      {/* Chat Header */}
       <ChatHeader
         repository={repository}
         userProfile={userProfile}
         messageCount={messageCount}
       />
 
-      {/* Messages with better spacing */}
       <div className="messages-container flex-1 overflow-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 custom-scrollbar">
-        {/* Motivational Quote */}
         {showQuote && messages.length === 0 && (
           <div className="flex justify-center py-8 md:py-12">
             <div className="text-center max-w-md px-4">
@@ -470,12 +457,10 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
                 )}
               </div>
 
-              {/* Updated Sources */}
               {message.role === 'assistant' && message.sources && Array.isArray(message.sources) && message.sources.length > 0 && (
                 <ChatSources sources={message.sources} />
               )}
 
-              {/* Message Footer */}
               <div className={`flex items-center justify-between mt-4 pt-3 border-t border-gray-300 dark:border-white/30`}>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   {formatTimestamp(message.timestamp)}
@@ -490,7 +475,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
           </div>
         ))}
 
-        {/* Loading Animation */}
         {loading && (
           <div className="flex justify-start">
             <div className="flex items-center gap-3">
@@ -517,7 +501,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Scroll to Bottom Button */}
       {showScrollButton && (
         <div className="fixed bottom-32 md:bottom-28 right-4 md:right-6 z-50">
           <button
@@ -543,7 +526,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
       )}
 
 
-      {/* Enhanced Quota Warning */}
       {!canSend && quotaInfo && (
         <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-t border-red-200 dark:border-red-800 px-4 py-3">
           <div className="flex items-center justify-between">
@@ -569,7 +551,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         </div>
       )}
 
-      {/* OPTIMIZED Input Area with Horizontal Scroll */}
       <div className="border-t border-gray-300 dark:border-white/20 bg-white/50 dark:bg-white/5 px-3 md:px-4 py-3 md:py-4">
         <div className="flex items-center gap-2 md:gap-3 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-xl md:rounded-2xl px-3 md:px-4 py-2.5 md:py-3 shadow-lg">
           <input
@@ -603,7 +584,6 @@ export default function ChatInterface({ repository }: ChatInterfaceProps) {
         </div>
       </div>
 
-      {/* Hide scrollbar for input */}
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

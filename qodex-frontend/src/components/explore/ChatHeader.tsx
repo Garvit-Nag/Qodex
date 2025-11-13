@@ -33,7 +33,6 @@ export default function ChatHeader({ repository, userProfile, messageCount }: Ch
   return (
     <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border-b border-gray-300 dark:border-white/20 px-4 md:px-6 py-3 md:py-4">
       <div className="flex items-center justify-between gap-3">
-        {/* Left side - Agent icon and info */}
         <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
           <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0">
             <Image
@@ -63,7 +62,6 @@ export default function ChatHeader({ repository, userProfile, messageCount }: Ch
           </div>
         </div>
 
-        {/* Right side - Repository link */}
         <Link
           href={repository.github_url}
           target="_blank"

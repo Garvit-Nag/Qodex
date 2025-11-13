@@ -5,7 +5,7 @@ import { stripe, SUBSCRIPTION_PLANS } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if stripe is initialized
+
     if (!stripe) {
       console.error('❌ Stripe not initialized');
       return NextResponse.json(
@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -66,10 +65,9 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Stripe session created:', session.id);
 
-    // Return the checkout URL instead of session ID
     return NextResponse.json({
-      checkoutUrl: session.url, // ✅ This is the new way
-      sessionId: session.id     // Keep for reference
+      checkoutUrl: session.url, 
+      sessionId: session.id     
     });
 
   } catch (error: any) {

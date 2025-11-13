@@ -25,7 +25,6 @@ export default function NotFound() {
     return () => clearInterval(timer);
   }, []);
 
-  // Handle redirect outside of render
   useEffect(() => {
     if (shouldRedirect) {
       router.push('/');
@@ -34,7 +33,6 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4">
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
@@ -47,15 +45,12 @@ export default function NotFound() {
         />
       </div>
 
-      {/* Modal-sized content */}
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl p-6 shadow-xl">
-          {/* 404 Icon */}
           <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg flex items-center justify-center mx-auto mb-4">
             <FileQuestion className="w-6 h-6 text-gray-600 dark:text-gray-400" />
           </div>
 
-          {/* 404 Message */}
           <div className="text-center mb-4">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
               404
@@ -68,14 +63,12 @@ export default function NotFound() {
             </p>
           </div>
 
-          {/* Countdown */}
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 mb-4 text-center">
             <p className="text-xs text-gray-600 dark:text-gray-400">
               Redirecting to home in <span className="font-medium">{countdown}s</span>
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="space-y-2">
             <Link
               href="/"

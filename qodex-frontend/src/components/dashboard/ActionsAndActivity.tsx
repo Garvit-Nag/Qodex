@@ -48,7 +48,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
         }
     };
 
-    // Sort repositories by creation date (most recent first)
     const sortedRepositories = [...repositories].sort((a, b) =>
         new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
     );
@@ -56,7 +55,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left: Actions Container - 1 column */}
                 <div className="lg:col-span-1 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl p-6 flex flex-col">
                     <div className="flex items-center gap-2 mb-4">
                         <MousePointerClick className="w-6 h-6 text-teal-600 dark:text-cyan-400" />
@@ -66,7 +64,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center space-y-4">
-                        {/* New Chat Button */}
                         <button
                             onClick={handleNewChat}
                             className="w-full flex items-center gap-3 p-4 bg-gray-900 hover:bg-gray-800 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-black rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group"
@@ -80,7 +77,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
                             </div>
                         </button>
 
-                        {/* Sign Out Button */}
                         <button
                             onClick={handleSignOutClick}
                             className="w-full flex items-center gap-3 p-4 bg-white/50 dark:bg-white/10 hover:bg-red-50 dark:hover:bg-red-900/20 border border-gray-200 dark:border-white/20 rounded-xl transition-all duration-300 group"
@@ -96,7 +92,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
                     </div>
                 </div>
 
-                {/* Right: Recent Activity - 2 columns */}
                 <div className="lg:col-span-2 bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-3xl shadow-2xl p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -105,7 +100,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
                         </h2>
                     </div>
 
-                    {/* Scrollable Activity List with custom scrollbar */}
                     <div className="h-[200px] overflow-y-auto custom-scrollbar pr-2">
                         {sortedRepositories.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full text-center">
@@ -147,7 +141,6 @@ export default function ActionsAndActivity({ repositories, onSignOut }: ActionsA
                 </div>
             </div>
 
-            {/* Sign Out Modal */}
             {showSignOutModal && (
                 <SignOutModal
                     onConfirm={handleSignOutConfirm}

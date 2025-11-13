@@ -11,7 +11,6 @@ export default function SignOutModal({ onConfirm, onCancel }: SignOutModalProps)
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <div className="bg-white/90 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/20 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-                {/* Header */}
                 <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                         <LogOut className="w-8 h-8 text-red-600 dark:text-red-400" />
@@ -24,7 +23,6 @@ export default function SignOutModal({ onConfirm, onCancel }: SignOutModalProps)
                     </p>
                 </div>
 
-                {/* Security Tip Card */}
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/50 rounded-xl p-4 mb-6">
                     <div className="flex gap-3 items-center">
                         <div className="flex-shrink-0">
@@ -41,7 +39,6 @@ export default function SignOutModal({ onConfirm, onCancel }: SignOutModalProps)
                     </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-3">
                     <button
                         onClick={onCancel}

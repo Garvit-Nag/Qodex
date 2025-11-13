@@ -24,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const currentUser = await account.get();
       console.log('✅ User found:', currentUser);
 
-      // Enhance user object with avatar if not present
       const enhancedUser = await enhanceUserWithAvatar(currentUser);
       setUser(enhancedUser as User);
       await fetchUserProfile(currentUser.$id);
@@ -42,16 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Enhanced function to get user avatar
   const enhanceUserWithAvatar = async (user: any) => {
     try {
-      // If user already has avatar, return as is
       if (user.avatar) {
         console.log('🔍 User already has avatar:', user.avatar);
         return user;
       }
 
-      // Try to get avatar from preferences
       console.log('🔄 Fetching user preferences for avatar...');
       const prefs = await account.getPrefs();
       console.log('🔍 User preferences:', prefs);
@@ -62,11 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('❌ No avatar in preferences, generating Gravatar...');
-      // Generate Gravatar URL as fallback
       return { ...user, avatar: '/profile-logo.png' };
     } catch (error) {
       console.log('❌ Could not enhance user with avatar:', error);
-      // Generate Gravatar as ultimate fallback
       return { ...user, avatar: '/profile-logo.png' };
     }
   };
@@ -162,12 +156,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      // Enhanced Google OAuth with profile scope
       account.createOAuth2Session(
         'google' as any,
         `${window.location.origin}/auth/callback`,
         `${window.location.origin}/auth/signin`,
-        ['profile', 'email'] // Request profile scope for avatar
+        ['profile', 'email'] 
       );
     } catch (error) {
       throw error;

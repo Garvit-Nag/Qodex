@@ -47,7 +47,7 @@ export default function Navbar() {
     try {
       await signOut();
       setShowSignOutModal(false);
-      router.push('/'); // Redirect to home after logout
+      router.push('/'); 
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -60,7 +60,6 @@ export default function Navbar() {
     }
   }
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element
@@ -83,7 +82,6 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 dark:bg-black/10 backdrop-blur-md border-b border-white/20 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo - Left */}
             <div className="flex items-center">
               <Link href="/" className="block transition-all duration-300 hover:scale-105 transform">
                 <div className="w-32 h-10 flex items-center justify-center">
@@ -107,7 +105,6 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Navigation Links - Center */}
             <div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2">
               <div className="flex items-center space-x-6">
                 {user ? (
@@ -122,7 +119,6 @@ export default function Navbar() {
                 <Link href="/pricing" className="relative text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white transition-all duration-300 hover:scale-105 transform pb-1 after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-purple-500 after:transition-all after:duration-300 hover:after:w-full hover:after:left-0">
                   Pricing
                 </Link>
-                {/* Always show Explore link, but protect access */}
                 <Link
                   href="/explore"
                   onClick={handleExploreClick}
@@ -136,9 +132,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Right side - Desktop Auth + Theme */}
             <div className="hidden lg:flex items-center space-x-4">
-              {/* Theme Toggle - Always visible */}
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-700 dark:text-white transition-all duration-300 border border-gray-300/20 dark:border-white/20 hover:border-gray-300/30 dark:hover:border-white/30"
@@ -196,7 +190,6 @@ export default function Navbar() {
                     </svg>
                   </button>
 
-                  {/* Enhanced Dropdown Menu */}
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-64 bg-white/90 dark:bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-300 dark:border-white/20 py-2 overflow-hidden">
                       {/* User Info */}
@@ -252,7 +245,6 @@ export default function Navbar() {
                         )}
                       </div>
 
-                      {/* Menu Items */}
                       <div className="py-1">
                         <Link
                           href="/dashboard"
@@ -267,7 +259,6 @@ export default function Navbar() {
 
                       </div>
 
-                      {/* Sign Out */}
                       <div className="border-t border-gray-200 dark:border-white/10 py-1">
                         <button
                           onClick={handleSignOutClick}
@@ -301,7 +292,6 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile menu button */}
             <div className="lg:hidden mobile-menu-container">
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -312,10 +302,8 @@ export default function Navbar() {
                 </svg>
               </button>
 
-              {/* Mobile Dropdown - Centered */}
               {showMobileMenu && (
                 <div className="absolute right-4 top-full mt-2 w-64 bg-white/90 dark:bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-300 dark:border-white/20 py-2 overflow-hidden">
-                  {/* Navigation Links - Centered */}
                   <div className="py-2">
                     {user ? (
                       <Link href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-white/60 dark:hover:bg-white/5 transition-colors">
@@ -337,7 +325,6 @@ export default function Navbar() {
                     </Link>
                   </div>
 
-                  {/* Theme Toggle - Centered */}
                   <div className="border-t border-gray-200 dark:border-white/10 py-2">
                     <button
                       onClick={toggleTheme}
@@ -361,7 +348,6 @@ export default function Navbar() {
                     </button>
                   </div>
 
-                  {/* Auth Section - Centered */}
                   {loading ? (
                     <div className="border-t border-gray-200 dark:border-white/10 py-2">
                       <div className="px-4 py-2 flex justify-center">
@@ -370,7 +356,6 @@ export default function Navbar() {
                     </div>
                   ) : user ? (
                     <>
-                      {/* User Info - Centered */}
                       <div className="border-t border-gray-200 dark:border-white/10 px-4 py-3">
                         <div className="flex flex-col items-center space-y-2">
                           <div className="relative">
@@ -404,7 +389,6 @@ export default function Navbar() {
                         </div>
                       </div>
 
-                      {/* User Menu Items - Centered */}
                       <div className="py-1">
 
 

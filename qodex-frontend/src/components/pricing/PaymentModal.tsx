@@ -28,7 +28,6 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
     setError(null);
 
     try {
-      // Step 1: Create checkout session on backend
       console.log('🔄 Creating Stripe checkout session...');
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
@@ -51,7 +50,6 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
       const { checkoutUrl } = await response.json();
       console.log('✅ Checkout session created:', checkoutUrl);
 
-      // Step 2: Redirect to Stripe Checkout (New Method)
       window.location.href = checkoutUrl;
 
     } catch (error: any) {
@@ -64,7 +62,6 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-2xl p-8 max-w-md w-full border border-border">
-        {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-foreground mb-2">
             Upgrade to {plan.name}
@@ -74,7 +71,6 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
           </p>
         </div>
 
-        {/* Plan Details */}
         <div className="bg-muted/30 rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center">
             <span className="text-foreground font-medium">{plan.name}</span>
@@ -87,14 +83,12 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
           </p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
             <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex gap-3">
           <button
             onClick={onClose}
@@ -121,7 +115,6 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
           </button>
         </div>
 
-        {/* Security Note */}
         <p className="text-xs text-muted-foreground text-center mt-4">
           🔒 Secured by Stripe • Your payment information is encrypted
         </p>
