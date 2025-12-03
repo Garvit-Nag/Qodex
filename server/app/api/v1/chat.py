@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+# Define the models directly in this file
 class ChatRequest(BaseModel):
     """Request model for chat with repository"""
     query: str
@@ -64,6 +65,7 @@ async def chat_with_repository(
     """Chat with a repository using QODEX AI"""
     logger.info(f"💬 QODEX Chat: '{request.query[:60]}...' for repo {request.repository_id} (user: {user_id})")
     
+    # Verify repository ownership
     repository = verify_repository_ownership(request.repository_id, user_id, db)
     
     if repository.status != RepositoryStatusEnum.READY:
@@ -78,18 +80,22 @@ async def chat_with_repository(
         )
     
     try:
+        # Initialize services
         embedding_service = EmbeddingService()
         vector_service = VectorService()
         chat_service = ChatService()
         
+        # Generate query embedding
         logger.info(f"🔍 Generating embedding for query...")
         query_embedding = await embedding_service.generate_query_embedding(request.query)
         
+        # Search for similar code chunks
         logger.info(f"🔎 Searching for relevant code chunks...")
         similar_chunks = await vector_service.search_similar_code(
             repository_id=request.repository_id,
             query_embedding=query_embedding,
-            top_k=5
+            top_k=5,
+            query_text=request.query  # ADD THIS
         )
         
         if not similar_chunks:
@@ -103,17 +109,45 @@ async def chat_with_repository(
                 success=False
             )
         
-        logger.info(f"✅ Found {len(similar_chunks)} relevant code chunks")
+        logger.info(f"✅ Found {len(similar_chunks)} relevant chunk identifiers from Pinecone")
         
-        logger.info(f"🤖 Generating AI response with Gemini...")
+        # Fetch full content from PostgreSQL
+        logger.info(f"📖 Fetching full code content from PostgreSQL...")
+        from app.models.code_file import CodeFile
+        
+        full_chunks = []
+        for chunk_meta in similar_chunks:
+            # Query database for full content
+            code_file = db.query(CodeFile).filter(
+                CodeFile.repository_id == request.repository_id,
+                CodeFile.file_path == chunk_meta['file_path'],
+                CodeFile.chunk_index == chunk_meta['chunk_index']
+            ).first()
+            
+            if code_file:
+                full_chunks.append({
+                    'file_path': code_file.file_path,
+                    'content': code_file.full_content,  # FULL CONTENT from PostgreSQL!
+                    'start_line': code_file.start_line,
+                    'end_line': code_file.end_line,
+                    'chunk_type': code_file.chunk_type,
+                    'similarity': chunk_meta['similarity']
+                })
+        
+        logger.info(f"✅ Retrieved {len(full_chunks)} complete code chunks from database")
+        
+        # Generate AI response with FULL content
+        logger.info(f"🤖 Generating AI response with Gemini using complete code...")
         ai_response = await chat_service.generate_response(
             query=request.query,
-            code_chunks=similar_chunks,
+            code_chunks=full_chunks,  # Use full_chunks instead of similar_chunks
             repository_name=repository.name
         )
         
+        # Save conversation if successful
         if ai_response['success']:
             try:
+                # Create or get conversation
                 conversation = db.query(Conversation).filter(
                     Conversation.repository_id == request.repository_id
                 ).first()
@@ -127,6 +161,7 @@ async def chat_with_repository(
                     db.commit()
                     db.refresh(conversation)
                 
+                # Save user message
                 user_message = Message(
                     conversation_id=conversation.id,
                     role="user",
@@ -134,6 +169,7 @@ async def chat_with_repository(
                 )
                 db.add(user_message)
                 
+                # Save assistant response
                 assistant_message = Message(
                     conversation_id=conversation.id,
                     role="assistant",
@@ -147,6 +183,7 @@ async def chat_with_repository(
                 
             except Exception as save_error:
                 logger.warning(f"⚠️ Failed to save conversation: {save_error}")
+                # Continue anyway - don't fail the response
         
         logger.info(f"🎉 QODEX chat successful for repo {request.repository_id} (user: {user_id})")
         
@@ -154,7 +191,7 @@ async def chat_with_repository(
             response=ai_response['response'],
             sources=ai_response['sources'],
             repository_name=repository.name,
-            context_chunks_used=len(similar_chunks),
+            context_chunks_used=len(full_chunks),  # Use full_chunks count
             model_used=ai_response['model_used'],
             success=ai_response['success']
         )
@@ -166,6 +203,7 @@ async def chat_with_repository(
             detail=f"Failed to process chat request: {str(e)}"
         )
 
+# ✅ NEW: Direct messages route (Option 1 solution!)
 @router.get("/{repository_id}/messages")
 async def get_repository_chat_messages(
     repository_id: int,
@@ -175,8 +213,10 @@ async def get_repository_chat_messages(
 ):
     """Get all chat messages for a repository directly - SINGLE API CALL!"""
     
+    # Verify repository ownership
     repository = verify_repository_ownership(repository_id, user_id, db)
     
+    # Get conversation for this repository
     conversation = db.query(Conversation).filter(
         Conversation.repository_id == repository_id
     ).first()
@@ -191,6 +231,7 @@ async def get_repository_chat_messages(
             "total_messages": 0
         }
     
+    # Get all messages
     messages = db.query(Message).filter(
         Message.conversation_id == conversation.id
     ).order_by(Message.created_at.asc()).all()
@@ -222,6 +263,7 @@ async def get_repository_conversations(
 ):
     """Get all conversations for a repository (user must own it)"""
     
+    # Verify repository ownership
     repository = verify_repository_ownership(repository_id, user_id, db)
     
     conversations = db.query(Conversation).filter(
@@ -249,6 +291,7 @@ async def get_conversation_messages(
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     
+    # Verify user owns the repository
     verify_repository_ownership(conversation.repository_id, user_id, db)
     
     messages = db.query(Message).filter(
@@ -263,6 +306,7 @@ async def get_conversation_messages(
         "total_messages": len(messages)
     }
 
+# ✅ NEW: User-specific chat routes
 @router.get("/users/{target_user_id}/conversations")
 async def get_user_all_conversations(
     target_user_id: str,
@@ -272,9 +316,11 @@ async def get_user_all_conversations(
 ):
     """Get all conversations for a specific user across all their repositories"""
     
+    # Security: Users can only access their own conversations
     if user_id != target_user_id:
         raise HTTPException(status_code=403, detail="Access denied - can only access your own conversations")
     
+    # Get all repositories for this user
     user_repos = db.query(Repository).filter(Repository.user_id == target_user_id).all()
     repo_ids = [repo.id for repo in user_repos]
     
@@ -285,6 +331,7 @@ async def get_user_all_conversations(
             "conversations": []
         }
     
+    # Get all conversations for user's repositories
     conversations = db.query(Conversation).filter(
         Conversation.repository_id.in_(repo_ids)
     ).order_by(Conversation.created_at.desc()).all()
@@ -315,6 +362,7 @@ async def test_repository_search(
 ):
     """Test endpoint to verify repository search functionality (user must own it)"""
     
+    # Verify repository ownership
     repository = verify_repository_ownership(repository_id, user_id, db)
     
     if repository.status != RepositoryStatusEnum.READY:

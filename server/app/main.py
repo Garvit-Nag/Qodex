@@ -6,6 +6,9 @@ from datetime import datetime
 import os
 import logging
 
+# Import all models so SQLAlchemy registers them before creating tables
+from app.models import Repository, Conversation, Message, CodeFile
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,28 +21,33 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# CORS configuration for production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://qodex.vercel.app",              
-        "https://qodex-frontend.vercel.app",    
-        "http://localhost:3000",                
-        "http://127.0.0.1:3000",                
+        "https://qodex.vercel.app",              # Your frontend domain
+        "https://qodex-frontend.vercel.app",     # Alternative frontend domain
+        "http://localhost:3000",                 # Local development
+        "http://127.0.0.1:3000",                # Local development
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
+# Load models on startup (but don't create tables - managed via Neon console)
 @app.on_event("startup")
 async def startup_event():
-    """Create database tables on startup"""
+    """Load models so SQLAlchemy relationships work"""
     try:
-        Base.metadata.create_all(bind=engine)
-        logger.info("🗄️ Database tables created successfully")
+        # Models are already imported at top of file
+        # This just ensures SQLAlchemy registry is ready
+        logger.info("🗄️ Database models loaded successfully")
+        logger.info("💡 Note: Tables are managed via Neon console, not auto-created")
     except Exception as e:
-        logger.error(f"❌ Error creating database tables: {e}")
+        logger.error(f"❌ Error loading models: {e}")
 
+# Health check endpoint
 @app.get("/health")
 @app.head("/health")
 async def health_check():
@@ -65,5 +73,6 @@ async def root():
         "version": "1.0.0"
     }
 
+# Include routers
 app.include_router(repositories.router, prefix="/api/v1/repositories", tags=["repositories"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])

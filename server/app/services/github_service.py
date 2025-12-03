@@ -28,10 +28,12 @@ class GitHubService:
         logger.info(f"🔄 Cloning {github_url} to {temp_dir}")
         
         try:
+            # Clone with depth=1 for faster cloning (only latest commit)
             repo = git.Repo.clone_from(github_url, temp_dir, depth=1)
             logger.info(f"✅ Successfully cloned repository")
             return temp_dir
         except Exception as e:
+            # Clean up on failure
             if os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir)
             raise Exception(f"Failed to clone repository: {str(e)}")
@@ -41,6 +43,7 @@ class GitHubService:
         chunks = []
         lines = content.split('\n')
         
+        # For small files, return as single chunk
         if len(content) <= max_chunk_size:
             return [{
                 'content': content,
@@ -51,6 +54,7 @@ class GitHubService:
                 'chunk_type': 'full_file'
             }]
         
+        # For larger files, split by functions/classes or line count
         current_chunk = []
         current_size = 0
         chunk_index = 0
@@ -60,11 +64,12 @@ class GitHubService:
             current_chunk.append(line)
             current_size += len(line) + 1  # +1 for newline
             
+            # Split on function/class definitions or when chunk gets too large
             is_function_start = any(line.strip().startswith(keyword) for keyword in 
                                   ['def ', 'function ', 'class ', 'interface ', 'public class'])
             
             if (current_size >= max_chunk_size) or (is_function_start and len(current_chunk) > 1):
-                if len(current_chunk) > 1:  
+                if len(current_chunk) > 1:  # Don't create empty chunks
                     chunks.append({
                         'content': '\n'.join(current_chunk[:-1] if is_function_start else current_chunk),
                         'file_path': file_path,
@@ -99,11 +104,13 @@ class GitHubService:
         logger.info(f"📁 Extracting code files from {repo_path}")
         
         for root, dirs, files in os.walk(repo_path):
+            # Skip ignored directories
             dirs[:] = [d for d in dirs if d not in self.ignore_dirs]
             
             for file in files:
                 file_path = Path(root) / file
                 
+                # Skip large files (>1MB)
                 if file_path.stat().st_size > 1024 * 1024:
                     continue
                     
@@ -112,11 +119,13 @@ class GitHubService:
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                             content = f.read()
                         
+                        # Skip empty files
                         if not content.strip():
                             continue
                             
                         relative_path = str(file_path.relative_to(repo_path))
                         
+                        # Chunk the file content
                         chunks = self.chunk_code_content(content, relative_path)
                         code_chunks.extend(chunks)
                         total_files += 1

@@ -13,6 +13,7 @@ class Conversation(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
+    # Relationships
     repository = relationship("Repository", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
     
@@ -25,11 +26,12 @@ class Message(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     conversation_id = Column(Integer, ForeignKey("conversations.id"), nullable=False)
-    role = Column(String, nullable=False)  
+    role = Column(String, nullable=False)  # 'user' or 'assistant'
     content = Column(Text, nullable=False)
-    citations = Column(JSON, nullable=True)  
+    citations = Column(JSON, nullable=True)  # Store code citations as JSON
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
+    # Relationships
     conversation = relationship("Conversation", back_populates="messages")
     
     def __repr__(self):
