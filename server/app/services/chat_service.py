@@ -33,7 +33,9 @@ class ChatService:
             context = self.prepare_context(code_chunks)
             
             prompt = f"""You are an expert code assistant analyzing the {repository_name} repository.
+
 User Question: {query}
+
 Code Context:
 {context}
 
@@ -98,7 +100,9 @@ CRITICAL: Every code reference MUST include the file path and line numbers from 
 Your detailed markdown response:"""
             
             response = self.model.generate_content(prompt)
-           
+            
+            # --- START: BEST FIX ---
+            # Clean the response text to remove markdown code block wrappers
             response_text = response.text
             
             if response_text.startswith("```markdown"):
@@ -109,7 +113,8 @@ Your detailed markdown response:"""
             if response_text.endswith("```"):
                 response_text = response_text[:-len("```")]
                 
-            response_text = response_text.strip() 
+            response_text = response_text.strip() # Remove any leading/trailing whitespace
+            # --- END: BEST FIX ---
 
             sources = []
             for chunk in code_chunks:
@@ -122,7 +127,7 @@ Your detailed markdown response:"""
                 })
             
             return {
-                'response': response_text,  
+                'response': response_text,  # Use the cleaned text
                 'sources': sources,
                 'context_chunks_used': len(code_chunks),
                 'repository_name': repository_name,
@@ -151,7 +156,9 @@ Similarity: {chunk['similarity']:.2f}
     def generate_quota_response(self, query: str, code_chunks: List[Dict], repository_name: str) -> Dict:
         context = self.prepare_context(code_chunks)
         response = f"""🚫 Gemini quota exceeded, but I found {len(code_chunks)} relevant code sections:
+
 {context}
+
 The search found relevant code with similarity scores from {min(c['similarity'] for c in code_chunks):.2f} to {max(c['similarity'] for c in code_chunks):.2f}. Please try again in a few minutes when quota resets."""
         
         return self.create_response_dict(response, code_chunks, repository_name, 'quota_exceeded')
@@ -159,7 +166,9 @@ The search found relevant code with similarity scores from {min(c['similarity'] 
     def generate_fallback_response(self, query: str, code_chunks: List[Dict], repository_name: str) -> Dict:
         context = self.prepare_context(code_chunks)
         response = f"""Found {len(code_chunks)} relevant code sections for: "{query}"
+
 {context}
+
 Note: AI analysis requires API configuration. The search results above show the most relevant code."""
         
         return self.create_response_dict(response, code_chunks, repository_name, 'fallback')

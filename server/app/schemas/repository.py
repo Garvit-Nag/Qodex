@@ -12,11 +12,11 @@ class RepositoryStatus(str, Enum):
 class RepositoryCreate(BaseModel):
     name: str
     github_url: str
-    user_id: str  
+    user_id: str  # ✅ Added back!
 
 class RepositoryResponse(BaseModel):
     id: int
-    user_id: str  
+    user_id: str  # ✅ Added back!
     name: str
     github_url: str
     status: RepositoryStatus

@@ -23,9 +23,16 @@ class VectorService:
         """Store embeddings using Pinecone"""
         return await self.pinecone_service.store_embeddings(repository_id, embedded_chunks)
     
-    async def search_similar_code(self, repository_id: int, query_embedding: List[float], top_k: int = 5) -> List[Dict]:
-        """Search for similar code using Pinecone"""
-        return await self.pinecone_service.search_similar_code(repository_id, query_embedding, top_k)
+    async def search_similar_code(self, repository_id: int, query_embedding: List[float], top_k: int = 5, query_text: str = "") -> List[Dict]:
+        """Search for similar code using Pinecone - returns identifiers only"""
+        
+        # Get results from Pinecone (now returns identifiers only, no content)
+        results = await self.pinecone_service.search_similar_code(repository_id, query_embedding, top_k)
+        
+        # Note: Keyword boosting now happens at the PostgreSQL level when fetching content
+        # Pinecone handles semantic similarity, PostgreSQL provides full content
+        
+        return results
     
     async def delete_repository_data(self, repository_id: int):
         """Delete repository data using Pinecone"""
