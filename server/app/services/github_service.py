@@ -2,7 +2,8 @@ import git
 import os
 import tempfile
 import shutil
-from typing import List, Dict
+import asyncio
+from typing import List, Dict, Tuple
 from pathlib import Path
 import logging
 
@@ -22,6 +23,76 @@ class GitHubService:
             'vendor', 'target', 'bin', 'obj', '.gradle', '.idea', '.vscode'
         }
     
+    async def verify_repository(self, github_url: str) -> Tuple[bool, str]:
+        """Verify repository accessibility and presence of supported code files before cloning in background."""
+        logger.info(f"🔍 Verifying repository: {github_url}")
+        
+        # 1. Check Accessibility
+        try:
+            # We use git ls-remote to check if the repo exists and is public without downloading anything.
+            # Using $env:GIT_TERMINAL_PROMPT="0" prevents git from hanging and asking for password
+            process = await asyncio.create_subprocess_exec(
+                "git", "ls-remote", github_url,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                env={**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+            )
+            stdout, stderr = await process.communicate()
+            
+            if process.returncode != 0:
+                logger.warning(f"❌ Verification failed - Repository inaccessible: {stderr.decode()}")
+                return False, "Repository is private, misspelled, or does not exist."
+                
+        except Exception as e:
+            logger.error(f"❌ Error during git ls-remote: {e}")
+            return False, f"Failed to verify repository accessibility: {str(e)}"
+            
+        # 2. Check for supported code extensions
+        temp_dir = tempfile.mkdtemp(prefix="codequery_verify_")
+        try:
+            # Minimal bare clone with filter=blob:none fetches ONLY the file tree, skipping file contents
+            process = await asyncio.create_subprocess_exec(
+                "git", "clone", "--bare", "--filter=blob:none", "--depth", "1", github_url, temp_dir,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                env={**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+            )
+            await process.communicate()
+            
+            if process.returncode != 0:
+                logger.warning(f"❌ Verification failed during bare clone")
+                return False, "Failed to inspect repository files."
+                
+            # List all remote files in the main/master branch tree
+            process_ls = await asyncio.create_subprocess_exec(
+                "git", "ls-tree", "-r", "HEAD", "--name-only",
+                cwd=temp_dir,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout_ls, _ = await process_ls.communicate()
+            
+            if process_ls.returncode == 0:
+                files = stdout_ls.decode().split('\n')
+                # Check if any file matches our supported extensions
+                has_code = any(Path(f).suffix.lower() in self.supported_extensions for f in files if f.strip())
+                
+                if not has_code:
+                    logger.warning(f"❌ Verification failed - No supported code files in {github_url}")
+                    return False, "Repository does not contain supported code files."
+                
+                logger.info(f"✅ Repository verification successful for {github_url}")
+                return True, "Success"
+            else:
+                return False, "Failed to read repository file structure."
+
+        except Exception as e:
+            logger.error(f"❌ Error during code extension check: {e}")
+            return False, f"Failed to verify repository contents: {str(e)}"
+        finally:
+             if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir, ignore_errors=True)
+
     async def clone_repository(self, github_url: str) -> str:
         """Clone repository to temporary directory"""
         temp_dir = tempfile.mkdtemp(prefix="codequery_")
