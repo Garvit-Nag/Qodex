@@ -161,6 +161,12 @@ async def add_repository(
     if not repository.github_url.startswith(('https://github.com/', 'git@github.com:')):
         raise HTTPException(status_code=400, detail="Invalid GitHub URL format")
     
+    # Fast synchronous pre-validation
+    github_service = GitHubService()
+    is_valid, error_msg = await github_service.verify_repository(repository.github_url)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=error_msg)
+
     # Check for duplicates for this user
     existing = db.query(Repository).filter(
         Repository.github_url == repository.github_url,
