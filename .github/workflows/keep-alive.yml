@@ -1,0 +1,36 @@
+name: Keep Services Alive
+
+on:
+  schedule:
+    - cron: '0 9 */3 * *'  # Every 3 days at 9:00 AM UTC
+  workflow_dispatch:        # Allow manual trigger from GitHub UI
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Appwrite (prevent project pause)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "X-Appwrite-Project: 6905ff9b003d3337a5df" \
+            https://cloud.appwrite.io/v1/health)
+          echo "Appwrite status: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 500 ]; then
+            echo "Appwrite is alive"
+          else
+            echo "Appwrite ping returned unexpected status: $STATUS"
+            exit 1
+          fi
+
+      - name: Ping Backend wake endpoint (prevent Neon DB suspension)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            https://garvitcpp-qodex.hf.space/wake)
+          echo "Backend wake status: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 500 ]; then
+            echo "Neon DB is awake"
+          else
+            echo "Backend wake returned unexpected status: $STATUS"
+            exit 1
+          fi
